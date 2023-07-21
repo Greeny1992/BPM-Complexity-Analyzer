@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from 'src/env/environment';
 @Injectable({
   providedIn: 'root',
 })
@@ -8,6 +9,6 @@ export class UploadService {
   uploadFile(file: File) {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    return this.http.post('/api/upload', formData);
+    return this.http.post(environment.api + '/upload', formData);
   }
 }
