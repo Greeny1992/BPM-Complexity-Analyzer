@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UploadService } from './upload.service';
 
@@ -10,10 +10,17 @@ import { UploadService } from './upload.service';
   styleUrls: ['./upload.component.css'],
 })
 export class UploadComponent {
+  @Output() fileUploaded = new EventEmitter<File>();
+
   constructor(private uploadS: UploadService) {}
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    this.uploadS.uploadFile(file).subscribe((res) => console.log(res));
+  onFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (file) {
+      this.fileUploaded.emit(file);
+      this.uploadS.uploadFile(file).subscribe((res) => console.log(res));
+    }
   }
 }

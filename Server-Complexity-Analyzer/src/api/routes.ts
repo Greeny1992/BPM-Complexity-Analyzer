@@ -1,7 +1,7 @@
 import { Router } from "express";
-import ExampleRoutes from "./example/example.routes";
+import BPMNAnalyzerRoutes from "./bpmn-analyzer/bpmn-analyzer.routes";
 
 const router = Router();
-router.use("/example", ExampleRoutes);
+router.use("/upload", BPMNAnalyzerRoutes);
 
 export default router;

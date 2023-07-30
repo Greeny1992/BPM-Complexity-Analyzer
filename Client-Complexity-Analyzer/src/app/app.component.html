@@ -1,1 +1,2 @@
-<app-upload></app-upload>
+<app-upload (fileUploaded)="onFileUploaded($event)"></app-upload>
+<app-bpmn-viewer [bpmnXml]="uploadedBpmn"></app-bpmn-viewer>
