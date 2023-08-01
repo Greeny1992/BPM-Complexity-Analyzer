@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { getExample } from "./bpmn-analyzer.controller";
+import { analyzeBpmn } from "./bpmn-analyzer.controller";
+import multer from "multer";
 
 const router = Router();
-router.route("/").post(getExample);
+const upload = multer();
+router.route("/").post(upload.single("bpmnFile"), analyzeBpmn);
 
 export default router;

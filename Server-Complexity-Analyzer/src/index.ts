@@ -8,6 +8,7 @@ import logger from "./api/middlewares/logger.middelware";
 import errorHandler from "./api/middlewares/error-handler.middleware";
 
 const app = express();
+
 const port = 3000;
 
 // compresses all the responses

@@ -8,7 +8,7 @@ export class UploadService {
   constructor(private readonly http: HttpClient) {}
   uploadFile(file: File) {
     const formData = new FormData();
-    formData.append('file', file, file.name);
+    formData.append('bpmnFile', file, file.name);
     return this.http.post(environment.api + '/upload', formData);
   }
 }
