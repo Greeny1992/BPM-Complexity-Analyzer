@@ -12,7 +12,7 @@ import BpmnViewer from 'bpmn-js/lib/Viewer';
   selector: 'app-bpmn-viewer',
   standalone: true,
   imports: [CommonModule],
-  template: ` <div #bpmnContainer style="height: 100%;"></div> `,
+  template: ` <div #bpmnContainer style="height: 100%; display: flex;"></div> `,
 })
 export class BpmnViewerComponent implements OnChanges {
   @ViewChild('bpmnContainer') private bpmnContainer: ElementRef =
@@ -53,6 +53,9 @@ export class BpmnViewerComponent implements OnChanges {
       const result = await this.viewer.importXML(xml);
       const { warnings } = result;
       console.log('Import warnings', warnings);
+      const canvas = this.viewer.get('canvas');
+      //@ts-ignore
+      canvas.zoom('fit-viewport');
     } catch (err: any) {
       console.log('Import errors', err.message, err.warnings);
     }

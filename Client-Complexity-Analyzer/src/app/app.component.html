@@ -1,2 +1,54 @@
-<app-upload (fileUploaded)="onFileUploaded($event)"></app-upload>
-<app-bpmn-viewer [bpmnXml]="uploadedBpmn"></app-bpmn-viewer>
+<mat-toolbar color="primary">
+  <span>BPMN-Model Complexity Analyzer</span>
+</mat-toolbar>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" dynamicHeight>
+  <mat-tab label="Upload & Viewer"
+    ><app-upload
+      (fileUploaded)="onFileUploaded($event)"
+      (analyzedResult)="analyzedData = $event"
+    ></app-upload>
+    <div style="height: 800px">
+      <p>Uploaded BPMN-Model</p>
+      <app-bpmn-viewer [bpmnXml]="uploadedBpmn"></app-bpmn-viewer>
+    </div>
+  </mat-tab>
+  <mat-tab
+    [label]="
+      'Lines of Code: ' +
+      (analyzedData.activityCount === undefined
+        ? 'Not Calculated yet'
+        : analyzedData.activityCount)
+    "
+    >Content 2</mat-tab
+  >
+  <mat-tab
+    [label]="
+      'Controll Flow Complexity: ' +
+      (analyzedData.cfc === undefined ? 'Not Calculated yet' : analyzedData.cfc)
+    "
+    >Content 3</mat-tab
+  >
+  <mat-tab
+    [label]="
+      'Cognitiv Complexity: ' +
+      (analyzedData.ccm === undefined ? 'Not Calculated yet' : analyzedData.ccm)
+    "
+    >Content 3</mat-tab
+  >
+  <mat-tab
+    [label]="
+      'Fan-In/Fan-Out: ' +
+      (analyzedData.fifo === undefined
+        ? 'Not Calculated yet'
+        : analyzedData.fifo)
+    "
+    >Content 3</mat-tab
+  >
+  <mat-tab
+    [label]="
+      'Halstead: ' +
+      (analyzedData.hal === undefined ? 'Not Calculated yet' : analyzedData.hal)
+    "
+    >Content 3</mat-tab
+  >
+</mat-tab-group>
