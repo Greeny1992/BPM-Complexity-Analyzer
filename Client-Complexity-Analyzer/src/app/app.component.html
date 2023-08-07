@@ -8,47 +8,422 @@
       (analyzedResult)="analyzedData = $event"
     ></app-upload>
     <div style="height: 800px">
-      <p>Uploaded BPMN-Model</p>
       <app-bpmn-viewer [bpmnXml]="uploadedBpmn"></app-bpmn-viewer>
     </div>
   </mat-tab>
-  <mat-tab
-    [label]="
-      'Lines of Code: ' +
-      (analyzedData.activityCount === undefined
-        ? 'Not Calculated yet'
-        : analyzedData.activityCount)
-    "
-    >Content 2</mat-tab
+  <mat-tab>
+    <ng-template mat-tab-label>
+      {{
+        "Lines of Code: " +
+          (analyzedData.activityCount === undefined
+            ? "Not Calculated yet"
+            : analyzedData.activityCount)
+      }}
+      <mat-icon
+        *ngIf="analyzedData.activityCount !== undefined"
+        class="example-tab-icon"
+        [color]="analyzedData.activityCount > 10 ? 'warn' : 'primary'"
+        style="margin-left: 10px"
+        >{{
+          analyzedData.activityCount > 10 ? "thumb_down" : "thumb_up"
+        }}</mat-icon
+      >
+    </ng-template>
+    <div class="row">
+      <mat-card>
+        <mat-card-content>
+          <h2>Lines of code</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content>
+          <h2>What to do</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      {{
+        "Controll Flow Complexity: " +
+          (analyzedData.cfc === undefined
+            ? "Not Calculated yet"
+            : analyzedData.cfc)
+      }}
+      <mat-icon
+        *ngIf="analyzedData.cfc !== undefined"
+        class="example-tab-icon"
+        [color]="analyzedData.cfc > 10 ? 'warn' : 'primary'"
+        style="margin-left: 10px"
+        >{{ analyzedData.cfc > 10 ? "thumb_down" : "thumb_up" }}</mat-icon
+      >
+    </ng-template>
+
+    <div class="row">
+      <mat-card>
+        <mat-card-content>
+          <h2>Controll Flow Complexity</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content>
+          <h2>What to do</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div></mat-tab
   >
-  <mat-tab
-    [label]="
-      'Controll Flow Complexity: ' +
-      (analyzedData.cfc === undefined ? 'Not Calculated yet' : analyzedData.cfc)
-    "
-    >Content 3</mat-tab
+  <mat-tab>
+    <ng-template mat-tab-label>
+      {{
+        "Cognitiv Complexity: " +
+          (analyzedData.ccm === undefined
+            ? "Not Calculated yet"
+            : analyzedData.ccm)
+      }}
+      <mat-icon
+        *ngIf="analyzedData.ccm !== undefined"
+        class="example-tab-icon"
+        [color]="analyzedData.ccm > 10 ? 'warn' : 'primary'"
+        style="margin-left: 10px"
+        >{{ analyzedData.ccm > 10 ? "thumb_down" : "thumb_up" }}</mat-icon
+      >
+    </ng-template>
+    <div class="row">
+      <mat-card>
+        <mat-card-content>
+          <h2>Cognitiv Complexity</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content>
+          <h2>What to do</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div></mat-tab
   >
-  <mat-tab
-    [label]="
-      'Cognitiv Complexity: ' +
-      (analyzedData.ccm === undefined ? 'Not Calculated yet' : analyzedData.ccm)
-    "
-    >Content 3</mat-tab
+  <mat-tab>
+    <ng-template mat-tab-label>
+      {{
+        "Fan-In/Fan-Out: " +
+          (analyzedData.fifo === undefined
+            ? "Not Calculated yet"
+            : analyzedData.fifo)
+      }}
+      <mat-icon
+        *ngIf="analyzedData.fifo !== undefined"
+        class="example-tab-icon"
+        [color]="analyzedData.fifo > 10 ? 'warn' : 'primary'"
+        style="margin-left: 10px"
+        >{{ analyzedData.fifo > 10 ? "thumb_down" : "thumb_up" }}</mat-icon
+      >
+    </ng-template>
+    <div class="row">
+      <mat-card>
+        <mat-card-content>
+          <h2>FanIn-/FanOut-Metric</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content>
+          <h2>What to do</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div></mat-tab
   >
-  <mat-tab
-    [label]="
-      'Fan-In/Fan-Out: ' +
-      (analyzedData.fifo === undefined
-        ? 'Not Calculated yet'
-        : analyzedData.fifo)
-    "
-    >Content 3</mat-tab
-  >
-  <mat-tab
-    [label]="
-      'Halstead: ' +
-      (analyzedData.hal === undefined ? 'Not Calculated yet' : analyzedData.hal)
-    "
-    >Content 3</mat-tab
+  <mat-tab>
+    <ng-template mat-tab-label>
+      {{
+        "Halstead: " +
+          (analyzedData.hal === undefined
+            ? "Not Calculated yet"
+            : "N=" +
+              analyzedData.hal.processLengthN +
+              " V=" +
+              analyzedData.hal.processVolumeV +
+              " D=" +
+              analyzedData.hal.processDifficultyD)
+      }}
+      <mat-icon
+        *ngIf="analyzedData.hal !== undefined"
+        class="example-tab-icon"
+        [color]="analyzedData.hal.processLengthN > 10 ? 'warn' : 'primary'"
+        style="margin-left: 10px"
+        >{{
+          analyzedData.hal.processLengthN > 10 ? "thumb_down" : "thumb_up"
+        }}</mat-icon
+      >
+    </ng-template>
+    <div class="row">
+      <mat-card>
+        <mat-card-content>
+          <h2>Halstead metric</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content>
+          <h2>What to do</h2>
+          <p>
+            The metric "Lines of Code" is an important complexity metric in
+            software development. It enables the evaluation of the complexity of
+            computer programs. Software development is the process of creating,
+            implementing, maintaining, and improving a computer program. As the
+            name suggests, the lines of the program are counted to assess the
+            problem complexity in terms of time and effort required to develop
+            and maintain a product . It is justified by the fact that as the
+            size and scope of a project increase, complexity also grows. When
+            comparing a simple program with a single "Hello World" output to
+            operating systems (which are essentially programs as well), the
+            level of complexity in operating systems is undeniable.
+            Additionally, larger and more complex applications tend to generate
+            a higher error rate during development . Gruhn and Laue suggest that
+            this metric can be adapted for BPMN as follows. Instead of counting
+            lines of code, the number of activities within a BPMN model is
+            counted, providing a measurable value for comparison. They justify
+            this approach by stating that a process with only two activities is
+            easier to understand than a process with fifty activities . However,
+            it is noted that the number of activities does not yet indicate
+            anything about the control flow . For instance, a process with fifty
+            activities but no branches (gateways), i.e., a continuous flow, is
+            not necessarily easier to understand than a process with two
+            activities. Therefore, the next subsection examines the complexity
+            of the control flow structure.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div></mat-tab
   >
 </mat-tab-group>

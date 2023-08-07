@@ -1,14 +1,23 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { UploadComponent } from './upload/upload.component';
 import { BpmnViewerComponent } from './bpmn-viewer/bpmn-viewer.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card';
+import { MatBadgeModule } from '@angular/material/badge';
+
+import { MatIconModule } from '@angular/material/icon';
 export interface AnalyzedDataI {
   activityCount: number;
   cfc: number;
   ccm: number;
   fifo: number;
-  hal: number;
+  hal: {
+    processLengthN: number;
+    processVolumeV: number;
+    processDifficultyD: number;
+  };
 }
 @Component({
   selector: 'app-root',
@@ -16,10 +25,14 @@ export interface AnalyzedDataI {
   styleUrls: ['./app.component.css'],
   standalone: true,
   imports: [
+    CommonModule,
     UploadComponent,
     BpmnViewerComponent,
     MatToolbarModule,
     MatTabsModule,
+    MatCardModule,
+    MatBadgeModule,
+    MatIconModule,
   ],
 })
 export class AppComponent {

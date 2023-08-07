@@ -4,6 +4,8 @@ import {
   countActivities,
   calculateControllFlowComplexity,
   calculateKognitiveWeight,
+  calculateFiFo,
+  calculateHalstead,
 } from "./bpmn-analyzer";
 const bpmnModdle = require("bpmn-moddle");
 
@@ -16,8 +18,10 @@ export const analyzeBpmn = async (req: Request, res: Response) => {
     const parsedBpmn = await moddle.fromXML(bpmnFileBuffer);
     const activityCount = countActivities(parsedBpmn);
     const cfc = calculateControllFlowComplexity(parsedBpmn);
-    const kkm = calculateKognitiveWeight(parsedBpmn);
-    res.send({ activityCount, cfc, kkm });
+    const ccm = calculateKognitiveWeight(parsedBpmn);
+    const fifo = calculateFiFo(parsedBpmn);
+    const hal = calculateHalstead(parsedBpmn);
+    res.send({ activityCount, cfc, ccm, fifo, hal });
   } catch (error) {
     console.error(error); // Log the error for debugging purposes
     res.status(500).send("An error occurred while processing the BPMN file.");
