@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1nmk9d0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="12.0.0">
+  <bpmn:process id="Process_0zwg1ag">
+    <bpmn:task id="Activity_1s0sxg8" name="Aufgabe">
+      <bpmn:outgoing>Flow_06plw04</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:subProcess id="Activity_0tdxcru" name="Unterprozess">
+      <bpmn:incoming>Flow_06plw04</bpmn:incoming>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_06plw04" sourceRef="Activity_1s0sxg8" targetRef="Activity_0tdxcru" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0zwg1ag">
+      <bpmndi:BPMNShape id="Activity_1s0sxg8_di" bpmnElement="Activity_1s0sxg8">
+        <dc:Bounds x="160" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tdxcru_di" bpmnElement="Activity_0tdxcru">
+        <dc:Bounds x="310" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_06plw04_di" bpmnElement="Flow_06plw04">
+        <di:waypoint x="260" y="120" />
+        <di:waypoint x="310" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_174v2uw">
+    <bpmndi:BPMNPlane id="BPMNPlane_0cnpnlt" bpmnElement="Activity_0tdxcru" />
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
