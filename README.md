@@ -14,7 +14,7 @@ To start the application, follow these steps:
 npm run dev
 ```
 
-3. After executing the command, the default web browser should open, displaying the running application.
+3. After executing the command, the default web browser should open, displaying the running application at http://localhost:4200/
 
 4. The application features tab navigation. The first tab allows you to upload a BPMN file for analysis. Subsequent tabs provide descriptions for each metric.
 
