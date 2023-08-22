@@ -15,17 +15,17 @@
     <ng-template mat-tab-label>
       {{
         "Lines of Code: " +
-          (analyzedData.activityCount === undefined
+          (analyzedData.elementCount === undefined
             ? "Not Calculated yet"
-            : analyzedData.activityCount)
+            : analyzedData.elementCount)
       }}
       <mat-icon
-        *ngIf="analyzedData.activityCount !== undefined"
+        *ngIf="analyzedData.elementCount !== undefined"
         class="example-tab-icon"
-        [color]="analyzedData.activityCount > 10 ? 'warn' : 'primary'"
+        [color]="analyzedData.elementCount > 10 ? 'warn' : 'primary'"
         style="margin-left: 10px"
         >{{
-          analyzedData.activityCount > 10 ? "thumb_down" : "thumb_up"
+          analyzedData.elementCount > 10 ? "thumb_down" : "thumb_up"
         }}</mat-icon
       >
     </ng-template>
@@ -345,11 +345,11 @@
           (analyzedData.hal === undefined
             ? "Not Calculated yet"
             : "N=" +
-              analyzedData.hal.processLengthN +
+              (analyzedData.hal.processLengthN | number : "1.2-2") +
               " V=" +
-              analyzedData.hal.processVolumeV +
+              (analyzedData.hal.processVolumeV | number : "1.2-2") +
               " D=" +
-              analyzedData.hal.processDifficultyD)
+              (analyzedData.hal.processDifficultyD | number : "1.2-2"))
       }}
       <mat-icon
         *ngIf="analyzedData.hal !== undefined"

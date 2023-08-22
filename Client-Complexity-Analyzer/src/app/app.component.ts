@@ -9,7 +9,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 
 import { MatIconModule } from '@angular/material/icon';
 export interface AnalyzedDataI {
-  activityCount: number;
+  elementCount: number;
   cfc: number;
   ccm: number;
   fifo: number;

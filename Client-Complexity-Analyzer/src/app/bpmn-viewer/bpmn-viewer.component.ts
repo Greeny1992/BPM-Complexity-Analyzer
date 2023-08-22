@@ -8,6 +8,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import BpmnViewer from 'bpmn-js/lib/Viewer';
+import TokenSimulationModule from 'bpmn-js-token-simulation/lib/viewer';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-bpmn-viewer',
   standalone: true,
@@ -28,8 +30,9 @@ export class BpmnViewerComponent implements OnChanges {
 
   set bpmnXml(value: string) {
     this._bpmnXml = value;
-    this.renderBpmn(this._bpmnXml);
   }
+
+  constructor(private _snackBar: MatSnackBar) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['bpmnXml'] && !changes['bpmnXml'].firstChange) {
@@ -47,17 +50,27 @@ export class BpmnViewerComponent implements OnChanges {
     // Initialize the viewer with the correct container element
     this.viewer = new BpmnViewer({
       container: this.bpmnContainer.nativeElement,
+      additionalModules: [TokenSimulationModule],
     });
 
     try {
-      const result = await this.viewer.importXML(xml);
-      const { warnings } = result;
-      console.log('Import warnings', warnings);
+      await this.viewer.importXML(xml);
       const canvas = this.viewer.get('canvas');
       //@ts-ignore
       canvas.zoom('fit-viewport');
     } catch (err: any) {
       console.log('Import errors', err.message, err.warnings);
+      this.openSnackBar(
+        'The importet model has some errors. You can see details in the console'
+      );
     }
+  }
+
+  openSnackBar(text: string) {
+    this._snackBar.open(text, 'Close', {
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 5000,
+    });
   }
 }
