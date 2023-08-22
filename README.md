@@ -1,6 +1,7 @@
 # BPM-Complexity-Analyzer
 
 This project was developed as part of Georg Prassl's master's thesis at Joanneum University of Applied Sciences in Graz.
+The goal of this project is to analyze the complexity of an BPMN-Modell.
 
 ## Getting Started
 
