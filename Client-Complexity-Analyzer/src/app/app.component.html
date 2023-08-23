@@ -2,11 +2,20 @@
   <span>BPMN-Model Complexity Analyzer</span>
 </mat-toolbar>
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" dynamicHeight>
-  <mat-tab label="Upload & Viewer"
-    ><app-upload
-      (fileUploaded)="onFileUploaded($event)"
-      (analyzedResult)="analyzedData = $event"
-    ></app-upload>
+  <mat-tab label="Upload & Viewer">
+    <div class="row">
+      <app-upload
+        (fileUploaded)="onFileUploaded($event)"
+        (analyzedResult)="analyzedData = $event"
+      ></app-upload>
+      <button
+        mat-mini-fab
+        aria-label="Example icon button with a home icon"
+        (click)="resetCurrentBPMN()"
+      >
+        <mat-icon>home</mat-icon>
+      </button>
+    </div>
     <div style="height: 800px">
       <app-bpmn-viewer [bpmnXml]="uploadedBpmn"></app-bpmn-viewer>
     </div>
@@ -14,7 +23,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       {{
-        "Lines of Code: " +
+        "Count of Elements: " +
           (analyzedData.elementCount === undefined
             ? "Not Calculated yet"
             : analyzedData.elementCount)
@@ -424,6 +433,7 @@
           </p>
         </mat-card-content>
       </mat-card>
-    </div></mat-tab
-  >
+    </div>
+  </mat-tab>
+  <mat-tab label="Evalutation"></mat-tab>
 </mat-tab-group>

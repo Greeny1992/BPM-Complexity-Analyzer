@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatBadgeModule } from '@angular/material/badge';
 
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 export interface AnalyzedDataI {
   elementCount: number;
   cfc: number;
@@ -33,6 +34,7 @@ export interface AnalyzedDataI {
     MatCardModule,
     MatBadgeModule,
     MatIconModule,
+    MatButtonModule,
   ],
 })
 export class AppComponent {
@@ -46,5 +48,10 @@ export class AppComponent {
       this.uploadedBpmn = e.target?.result as string;
     };
     reader.readAsText(file);
+  }
+
+  resetCurrentBPMN() {
+    this.analyzedData = {} as AnalyzedDataI;
+    this.uploadedBpmn = '';
   }
 }

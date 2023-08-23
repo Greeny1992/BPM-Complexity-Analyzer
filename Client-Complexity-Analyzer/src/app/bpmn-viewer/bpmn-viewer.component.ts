@@ -23,11 +23,10 @@ export class BpmnViewerComponent implements OnChanges {
   private _bpmnXml: string = '';
   private viewer: BpmnViewer | null = null;
 
-  @Input()
   get bpmnXml(): string {
     return this._bpmnXml;
   }
-
+  @Input()
   set bpmnXml(value: string) {
     this._bpmnXml = value;
   }
@@ -35,7 +34,11 @@ export class BpmnViewerComponent implements OnChanges {
   constructor(private _snackBar: MatSnackBar) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['bpmnXml'] && !changes['bpmnXml'].firstChange) {
+    if (
+      changes['bpmnXml'] &&
+      !changes['bpmnXml'].firstChange &&
+      changes['bpmnXml'].currentValue !== ''
+    ) {
       this.renderBpmn(changes['bpmnXml'].currentValue);
     }
   }
