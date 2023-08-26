@@ -1,27 +1,42 @@
 import {
+  AfterContentInit,
   Component,
   ElementRef,
   Input,
   OnChanges,
+  OnInit,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import BpmnViewer from 'bpmn-js/lib/Viewer';
-import TokenSimulationModule from 'bpmn-js-token-simulation/lib/viewer';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import BpmnViewer from 'bpmn-js/lib/NavigatedViewer';
+
+//@ts-ignore
+import TokenSimulationModule from 'bpmn-js-token-simulation/lib/viewer';
+
 @Component({
   selector: 'app-bpmn-viewer',
   standalone: true,
   imports: [CommonModule],
-  template: ` <div #bpmnContainer style="height: 100%; display: flex;"></div> `,
+  template: ` <div #ref class="diagram-container"></div> `,
+  styles: [
+    `
+      .diagram-container {
+        height: 100%;
+        width: 100%;
+      }
+    `,
+  ],
 })
-export class BpmnViewerComponent implements OnChanges {
-  @ViewChild('bpmnContainer') private bpmnContainer: ElementRef =
-    {} as ElementRef;
+export class BpmnViewerComponent implements OnChanges, AfterContentInit {
+  @ViewChild('ref', { static: true })
+  private el!: ElementRef;
 
   private _bpmnXml: string = '';
-  private viewer: BpmnViewer | null = null;
+  private viewer: BpmnViewer = new BpmnViewer({
+    additionalModules: [TokenSimulationModule],
+  });
 
   get bpmnXml(): string {
     return this._bpmnXml;
@@ -31,36 +46,31 @@ export class BpmnViewerComponent implements OnChanges {
     this._bpmnXml = value;
   }
 
-  constructor(private _snackBar: MatSnackBar) {}
-
+  constructor(private _snackBar: MatSnackBar) {
+    //@ts-ignore
+    this.viewer.on('import.done', ({ error }) => {
+      if (!error) {
+        //@ts-ignore
+        this.viewer.get('canvas').zoom('fit-viewport');
+      }
+    });
+  }
+  ngAfterContentInit(): void {
+    this.viewer.attachTo(this.el.nativeElement);
+  }
   ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes['bpmnXml'] &&
-      !changes['bpmnXml'].firstChange &&
-      changes['bpmnXml'].currentValue !== ''
-    ) {
-      this.renderBpmn(changes['bpmnXml'].currentValue);
+    if (changes['bpmnXml'] && !changes['bpmnXml'].firstChange) {
+      if (changes['bpmnXml'].currentValue === '') {
+        this.viewer?.clear();
+      } else {
+        this.renderBpmn(changes['bpmnXml'].currentValue);
+      }
     }
   }
 
   private async renderBpmn(xml: string) {
-    // Destroy the previous viewer instance to prevent duplicates
-    if (this.viewer) {
-      this.viewer.detach();
-      this.viewer.destroy();
-    }
-
-    // Initialize the viewer with the correct container element
-    this.viewer = new BpmnViewer({
-      container: this.bpmnContainer.nativeElement,
-      additionalModules: [TokenSimulationModule],
-    });
-
     try {
-      await this.viewer.importXML(xml);
-      const canvas = this.viewer.get('canvas');
-      //@ts-ignore
-      canvas.zoom('fit-viewport');
+      await this.viewer?.importXML(xml);
     } catch (err: any) {
       console.log('Import errors', err.message, err.warnings);
       this.openSnackBar(

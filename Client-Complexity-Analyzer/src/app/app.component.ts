@@ -9,17 +9,29 @@ import { MatBadgeModule } from '@angular/material/badge';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-export interface AnalyzedDataI {
-  elementCount: number;
-  cfc: number;
-  ccm: number;
-  fifo: number;
-  hal: {
-    processLengthN: number;
-    processVolumeV: number;
-    processDifficultyD: number;
-  };
-}
+import { AnalyzedDataI, WeightsDataI } from './models';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  NgForm,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSliderModule } from '@angular/material/slider';
+import { AnalyzerService } from './analyzer.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+const DEFAULT_WEIGHTS = {
+  sequences: 1,
+  xor2: 2,
+  xorGT2: 3,
+  and: 4,
+  or: 7,
+  subprocess: 2,
+  multipleInstance: 6,
+};
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -35,13 +47,22 @@ export interface AnalyzedDataI {
     MatBadgeModule,
     MatIconModule,
     MatButtonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSliderModule,
+    FormsModule,
   ],
 })
 export class AppComponent {
   title = 'Client-Complexity-Analyzer';
   uploadedBpmn: string = '';
   analyzedData: AnalyzedDataI = {} as AnalyzedDataI;
+  ccmDataForm = DEFAULT_WEIGHTS;
 
+  constructor(
+    private analyzerService: AnalyzerService,
+    private _snack: MatSnackBar
+  ) {}
   onFileUploaded(file: File) {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -53,5 +74,20 @@ export class AppComponent {
   resetCurrentBPMN() {
     this.analyzedData = {} as AnalyzedDataI;
     this.uploadedBpmn = '';
+  }
+
+  onSubmit() {
+    const weightsData: WeightsDataI = this.ccmDataForm;
+    this.analyzerService.updateCognitivWeights(weightsData).subscribe(() =>
+      this._snack.open('Cognitiv weights updated successfull', '', {
+        duration: 3000,
+        verticalPosition: 'top',
+        horizontalPosition: 'center',
+      })
+    );
+  }
+
+  resetCCW(): void {
+    this.ccmDataForm = DEFAULT_WEIGHTS;
   }
 }

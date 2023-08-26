@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UploadService } from './upload.service';
-import { AnalyzedDataI } from '../app.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { AnalyzedDataI } from '../models';
 @Component({
   selector: 'app-upload',
   standalone: true,
@@ -44,5 +44,6 @@ export class UploadComponent {
         )
         .subscribe((res: AnalyzedDataI) => this.analyzedResult.emit(res));
     }
+    input.value = '';
   }
 }

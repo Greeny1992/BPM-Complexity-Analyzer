@@ -9,11 +9,12 @@
         (analyzedResult)="analyzedData = $event"
       ></app-upload>
       <button
+        style="margin-left: 10px"
         mat-mini-fab
-        aria-label="Example icon button with a home icon"
+        color="warn"
         (click)="resetCurrentBPMN()"
       >
-        <mat-icon>home</mat-icon>
+        <mat-icon>refresh</mat-icon>
       </button>
     </div>
     <div style="height: 800px">
@@ -40,65 +41,86 @@
     </ng-template>
     <div class="row">
       <mat-card>
+        <mat-card-header>
+          <mat-card-title> Count of Elements </mat-card-title>
+          <mat-card-subtitle>Description</mat-card-subtitle>
+        </mat-card-header>
         <mat-card-content>
-          <h2>Lines of code</h2>
           <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
+            The metric "Count of Elements" is an important complexity metric in
+            business process modeling. It allows evaluating the complexity of
+            BPMN models. BPMN (Business Process Model and Notation) is a
+            standard notation for modeling business processes.
           </p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card>
-        <mat-card-content>
-          <h2>What to do</h2>
+
           <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
+            The metric is based on the understanding that as the size and scope
+            of a project increase, its complexity also grows. This holds true in
+            software development, where the "Lines of Code" metric has been
+            widely used to measure the complexity of computer programs. The
+            larger and more complex a program becomes, the higher the likelihood
+            of generating errors during development.
           </p>
+
+          <p>
+            Gruhn and Laue suggest adapting the metric for BPMN models. Instead
+            of counting lines of code, the metric counts the number of
+            activities within a BPMN model. This provides a measurable value for
+            evaluating and comparing the complexity of different models.
+            However, they acknowledge that the number of activities alone does
+            not capture the entire complexity, as it doesn't consider the
+            control flow.
+          </p>
+
+          <p>
+            To address this limitation, an extension of the metric is proposed.
+            Rather than counting only activities, the metric counts all elements
+            present in the BPMN model. This includes not only activities but
+            also decision points, gateways, and other elements. Flow arrows are
+            excluded from the count, as they don't significantly contribute to
+            complexity.
+          </p>
+
+          <p>
+            The formula for the Count of Elements (CoE) metric is as follows:
+          </p>
+          <pre>
+        CoE(GPM) = |E_GPM|
+    </pre
+          >
+          <p>
+            Where CoE(GPM) represents the Count of Elements in a General Process
+            Model (GPM), and E is the set of all elements within the model. This
+            extended metric provides a more comprehensive measure of complexity
+            by considering the various elements that contribute to the overall
+            complexity of a BPMN model.
+          </p>
+
+          <p>
+            Further empirical research could validate the effectiveness of this
+            metric and potentially provide guidelines to keep complexity within
+            manageable limits during the modeling process.
+          </p>
+
+          <h2>References:</h2>
+          <ul>
+            <li>
+              Reference 1: Sonam Bhatia and Jyoteesh Malhotra. A survey on
+              impact of lines of code on soft- ware complexity. In 2014
+              International Conference on Advances in Engineering and Technology
+              Research (ICAETR - 2014), pages 1–4, 2014
+            </li>
+            <li>
+              Reference 2: Volker Gruhn and Ralf Laue. Approaches for Business
+              Process Model Complexity Me- trics. In Witold Abramowicz and
+              Heinrich C. Mayr, editors, Technologies for Business Information
+              Systems, pages 13–24. Springer Netherlands, Dordrecht, 2007.
+            </li>
+            <li>
+              Reference 3: Jorge Cardoso. How to Measure the Control-flow
+              Complexity of Web processes and Workflows, pages 199–212. 01 2005.
+            </li>
+          </ul>
         </mat-card-content>
       </mat-card>
     </div>
@@ -122,69 +144,12 @@
 
     <div class="row">
       <mat-card>
-        <mat-card-content>
-          <h2>Controll Flow Complexity</h2>
-          <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
-          </p>
-        </mat-card-content>
+        <mat-card-content> </mat-card-content>
       </mat-card>
       <mat-card>
-        <mat-card-content>
-          <h2>What to do</h2>
-          <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
-          </p>
-        </mat-card-content>
-      </mat-card>
-    </div></mat-tab
-  >
+        <mat-card-content> </mat-card-content>
+      </mat-card></div
+  ></mat-tab>
   <mat-tab>
     <ng-template mat-tab-label>
       {{
@@ -203,69 +168,153 @@
     </ng-template>
     <div class="row">
       <mat-card>
+        <mat-card-header>
+          <mat-card-title
+            >Cognitiv Weights
+            <button
+              style="margin-left: 10px"
+              mat-mini-fab
+              color="warn"
+              (click)="resetCurrentBPMN()"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button></mat-card-title
+          >
+          <mat-card-subtitle>initial according to Gruhn</mat-card-subtitle>
+        </mat-card-header>
         <mat-card-content>
-          <h2>Cognitiv Complexity</h2>
-          <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
-          </p>
+          <form #myForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="column">
+              <div class="row justify-space-between align-center">
+                <label>Sequences</label>
+                <mat-slider
+                  [max]="10"
+                  [min]="1"
+                  [step]="1"
+                  [discrete]="true"
+                  [showTickMarks]="true"
+                >
+                  <input
+                    matSliderThumb
+                    [(ngModel)]="ccmDataForm.sequences"
+                    name="sequences"
+                    #slider
+                  />
+                </mat-slider>
+              </div>
+              <div class="row justify-space-between align-center">
+                <label>XOR2</label>
+                <mat-slider
+                  [max]="10"
+                  [min]="1"
+                  [step]="1"
+                  [discrete]="true"
+                  [showTickMarks]="true"
+                >
+                  <input
+                    matSliderThumb
+                    [(ngModel)]="ccmDataForm.xor2"
+                    name="xor2"
+                    #slider
+                  />
+                </mat-slider>
+              </div>
+              <div class="row justify-space-between align-center">
+                <label>xorGT2</label>
+                <mat-slider
+                  [max]="10"
+                  [min]="1"
+                  [step]="1"
+                  [discrete]="true"
+                  [showTickMarks]="true"
+                >
+                  <input
+                    matSliderThumb
+                    [(ngModel)]="ccmDataForm.xorGT2"
+                    name="xorGT2"
+                    #slider
+                  />
+                </mat-slider>
+              </div>
+              <div class="row justify-space-between align-center">
+                <label>and</label>
+                <mat-slider
+                  [max]="10"
+                  [min]="1"
+                  [step]="1"
+                  [discrete]="true"
+                  [showTickMarks]="true"
+                >
+                  <input
+                    matSliderThumb
+                    [(ngModel)]="ccmDataForm.and"
+                    name="and"
+                    #slider
+                  />
+                </mat-slider>
+              </div>
+              <div class="row justify-space-between align-center">
+                <label>or</label>
+                <mat-slider
+                  [max]="10"
+                  [min]="1"
+                  [step]="1"
+                  [discrete]="true"
+                  [showTickMarks]="true"
+                >
+                  <input
+                    matSliderThumb
+                    [(ngModel)]="ccmDataForm.or"
+                    name="or"
+                    #slider
+                  />
+                </mat-slider>
+              </div>
+              <div class="row justify-space-between align-center">
+                <label>subprocess</label>
+                <mat-slider
+                  [max]="10"
+                  [min]="1"
+                  [step]="1"
+                  [discrete]="true"
+                  [showTickMarks]="true"
+                >
+                  <input
+                    matSliderThumb
+                    [(ngModel)]="ccmDataForm.subprocess"
+                    name="subprocess"
+                    #slider
+                  />
+                </mat-slider>
+              </div>
+              <div class="row justify-space-between align-center">
+                <label>multipleInstance</label>
+                <mat-slider
+                  [max]="10"
+                  [min]="1"
+                  [step]="1"
+                  [discrete]="true"
+                  [showTickMarks]="true"
+                >
+                  <input
+                    matSliderThumb
+                    [(ngModel)]="ccmDataForm.multipleInstance"
+                    name="multipleInstance"
+                    #slider
+                  />
+                </mat-slider>
+              </div>
+              <div class="row">
+                <button mat-button type="submit">Submit</button>
+              </div>
+            </div>
+          </form>
         </mat-card-content>
       </mat-card>
       <mat-card>
-        <mat-card-content>
-          <h2>What to do</h2>
-          <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
-          </p>
-        </mat-card-content>
-      </mat-card>
-    </div></mat-tab
-  >
+        <mat-card-content> </mat-card-content>
+      </mat-card></div
+  ></mat-tab>
   <mat-tab>
     <ng-template mat-tab-label>
       {{

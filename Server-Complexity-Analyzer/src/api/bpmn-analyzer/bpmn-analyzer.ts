@@ -15,6 +15,29 @@ const gatewayTypes: string[] = [
   "bpmn:InclusiveGateway",
   "bpmn:ExclusiveGateway",
 ];
+export interface WeightsDataI {
+  sequences: number;
+  xor2: number;
+  xorGT2: number;
+  and: number;
+  or: number;
+  subprocess: number;
+  multipleInstance: number;
+}
+
+let cognitiveWeights: WeightsDataI = {
+  sequences: 1,
+  xor2: 2,
+  xorGT2: 3,
+  and: 4,
+  or: 7,
+  subprocess: 2,
+  multipleInstance: 6,
+};
+
+export function updateWeights(newWeights: WeightsDataI): void {
+  cognitiveWeights = newWeights;
+}
 
 // Function to count various BPMN elements within a parsed BPMN object
 export function countElements(parsedBpmn: any): number {
@@ -35,9 +58,17 @@ export function countElements(parsedBpmn: any): number {
     for (const process of processes) {
       // Filter out elements that are not 'bpmn:SequenceFlow'
       const elementsWithoutFlows =
-        process.flowElements?.filter(
-          (element: any) => element.$type !== "bpmn:SequenceFlow"
-        ) ?? [];
+        process.flowElements?.filter((element: any) => {
+          if (element.$type !== "bpmn:SequenceFlow") {
+            return true;
+          } else {
+            if (element.conditionExpression) {
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }) ?? [];
       // Increment the count with the number of elements without flows
       elementCount += elementsWithoutFlows.length;
     }
@@ -126,24 +157,20 @@ export function getOpeningGatewaysOfType(
 ): [string, number][] {
   let gateways: [string, number][] = [];
   const references = parsedBpmn.references;
-
-  // Iterate through references to find gateways of the specified type
-  for (let refI = 0; refI < references.length; refI++) {
-    const ref = references[refI];
-    if (ref.element.$type === type) {
-      // If a gateway is already in the list, update its outgoing count
-      if (gateways.filter((x) => x[0] === ref.element.id).length > 0) {
-        if (ref.property === "bpmn:outgoing") {
+  references.forEach(
+    (ref: { element: { $type: string; id: string }; property: string }) => {
+      if (ref.element.$type === type && ref.property === "bpmn:outgoing") {
+        // If a gateway is already in the list, update its outgoing count
+        if (gateways.filter((x) => x[0] === ref.element.id).length > 0) {
           gateways.filter((x) => x[0] === ref.element.id)[0][1]++;
         }
-      }
-      // If a gateway is not in the list, add it with an outgoing count of 1
-      else {
-        if (ref.property === "bpmn:outgoing")
+        // If a gateway is not in the list, add it with an outgoing count of 1
+        else {
           gateways.push([ref.element.id, 1]);
+        }
       }
     }
-  }
+  );
 
   // Filter out opening gateways with more than one outgoing path
   const openingGateways = gateways.filter((x) => x[1] > 1);
@@ -191,9 +218,14 @@ export function countOutgoingWaysOfInclusiveGateways(
   return outgoingPathsInclusiveGateways;
 }
 
-// Function to calculate Kognitive weight based on gateways and subprocesses
-export function calculateKognitiveWeight(parsedBpmn: any): number {
+// Function to calculate Cognitive weight based on gateways and subprocesses
+export async function calculateCognitiveWeight(
+  parsedBpmn: any,
+  xmlBpmn: any
+): Promise<number> {
   // Calculate weights for different gateway types and subprocesses
+  const sequencesWeight =
+    (await getPaths(xmlBpmn)) * cognitiveWeights.sequences;
   const xorWeight = calcXORWeight(
     getOpeningGatewaysOfType(parsedBpmn, "bpmn:ExclusiveGateway")
   );
@@ -206,7 +238,7 @@ export function calculateKognitiveWeight(parsedBpmn: any): number {
   const subprocessWeight = calcSubprocessWeight(countSubprocesses(parsedBpmn));
 
   // Calculate and return the total Kognitive weight
-  return xorWeight + andWeight + orWeight + subprocessWeight;
+  return xorWeight + andWeight + orWeight + subprocessWeight + sequencesWeight;
 }
 
 // Function to calculate the weight of XOR gateways based on outgoing paths
@@ -215,7 +247,8 @@ export function calcXORWeight(
 ): number {
   // Calculate the weight of XOR gateways based on outgoing paths count
   const weightOutgoingPathsExclusiveGateways = openingExclusiveGateways.reduce(
-    (prev, curr) => prev + (curr[1] === 2 ? 2 : 3),
+    (prev, curr) =>
+      prev + (curr[1] === 2 ? cognitiveWeights.xor2 : cognitiveWeights.xorGT2),
     0
   );
 
@@ -232,7 +265,8 @@ export function calcParallelWeight(
   openingParallelGateways: [string, number][]
 ): number {
   // Calculate the weight of parallel gateways based on their count
-  const weightParallelGateways = openingParallelGateways.length * 4;
+  const weightParallelGateways =
+    openingParallelGateways.length * cognitiveWeights.and;
 
   // Log the result and return the calculated weight
   console.log("Weight parallel Gateways:", weightParallelGateways);
@@ -244,7 +278,8 @@ export function calcInclusiveWeight(
   openingInclusiveGateways: [string, number][]
 ): number {
   // Calculate the weight of inclusive gateways based on their count
-  const weightInclusiveGateways = openingInclusiveGateways.length * 7;
+  const weightInclusiveGateways =
+    openingInclusiveGateways.length * cognitiveWeights.or;
 
   // Log the result and return the calculated weight
   console.log("Weight inclusive Gateways:", weightInclusiveGateways);
@@ -294,7 +329,7 @@ export function countSubprocesses(parsedBpmn: any): number {
 // Function to calculate the weight of subprocesses based on their count
 export function calcSubprocessWeight(subprocessCount: number): number {
   // Calculate the weight of subprocesses based on their count
-  const subprocessWeight = subprocessCount * 2;
+  const subprocessWeight = subprocessCount * cognitiveWeights.subprocess;
 
   // Log the result and return the calculated weight
   console.log("Subprocess Weight:", subprocessWeight);
@@ -371,10 +406,13 @@ export const getPaths = async (xmlBpmn: any) => {
   const engine = new Engine({
     source: xmlBpmn,
   });
+
   const [definition] = await engine.getDefinitions();
   const shakenStarts = definition.shake();
   const sequencesKey = Object.keys(shakenStarts)[0];
   //@ts-ignore
   const sequences = shakenStarts[sequencesKey];
-  console.log(JSON.stringify(sequences.length));
+  console.log("Sequences-length", sequences.length);
+  console.log("Sequences", JSON.stringify(sequences));
+  return sequences.length;
 };

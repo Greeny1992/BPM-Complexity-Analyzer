@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { analyzeBpmn } from "./bpmn-analyzer.controller";
+import { analyzeBpmn, updateCognitivWeights } from "./bpmn-analyzer.controller";
 import multer from "multer";
 
 const router = Router();
 const upload = multer();
-router.route("/").post(upload.single("bpmnFile"), analyzeBpmn);
+router.route("/upload").post(upload.single("bpmnFile"), analyzeBpmn);
+router.route("/update-weights").post(updateCognitivWeights);
 
 export default router;
