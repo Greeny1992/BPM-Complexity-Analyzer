@@ -21,6 +21,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSliderModule } from '@angular/material/slider';
 import { AnalyzerService } from './analyzer.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { EvaluationComponent } from './evaluation/evaluation.component';
 
 const DEFAULT_WEIGHTS = {
   sequences: 1,
@@ -51,6 +52,7 @@ const DEFAULT_WEIGHTS = {
     MatFormFieldModule,
     MatSliderModule,
     FormsModule,
+    EvaluationComponent,
   ],
 })
 export class AppComponent {

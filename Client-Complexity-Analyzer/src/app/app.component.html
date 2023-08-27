@@ -153,6 +153,31 @@
   <mat-tab>
     <ng-template mat-tab-label>
       {{
+        "Count of Paths: " +
+          (analyzedData.cop === undefined
+            ? "Not Calculated yet"
+            : analyzedData.cop)
+      }}
+      <mat-icon
+        *ngIf="analyzedData.cop !== undefined"
+        class="example-tab-icon"
+        [color]="analyzedData.cop > 10 ? 'warn' : 'primary'"
+        style="margin-left: 10px"
+        >{{ analyzedData.cop > 10 ? "thumb_down" : "thumb_up" }}</mat-icon
+      >
+    </ng-template>
+
+    <div class="row">
+      <mat-card>
+        <mat-card-content> </mat-card-content>
+      </mat-card>
+      <mat-card>
+        <mat-card-content> </mat-card-content>
+      </mat-card></div
+  ></mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      {{
         "Cognitiv Complexity: " +
           (analyzedData.ccm === undefined
             ? "Not Calculated yet"
@@ -484,5 +509,7 @@
       </mat-card>
     </div>
   </mat-tab>
-  <mat-tab label="Evalutation"></mat-tab>
+  <mat-tab label="Evalutation">
+    <ng-template matTabContent> <app-evaluation></app-evaluation></ng-template>
+  </mat-tab>
 </mat-tab-group>

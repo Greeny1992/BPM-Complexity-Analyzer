@@ -8,6 +8,10 @@ import {
   countElements,
   getPaths,
   updateWeights,
+  calcCountOfPaths,
+  AnalyzedDataI,
+  addNewCalculatedBPMN,
+  getCalculatedBPMNs,
 } from "./bpmn-analyzer";
 const bpmnModdle = require("bpmn-moddle");
 
@@ -15,26 +19,33 @@ const bpmnModdle = require("bpmn-moddle");
 export const analyzeBpmn = async (req: Request, res: Response) => {
   // Convert uploaded BPMN file buffer to string
   const bpmnFileBuffer = req.file.buffer.toString();
-
+  const fileName = req.file.originalname;
   // Initialize bpmn-moddle for BPMN XML parsing
   const moddle = new bpmnModdle();
 
   try {
     // Parse the BPMN XML using bpmn-moddle
     const parsedBpmn = await moddle.fromXML(bpmnFileBuffer);
-    console.log(JSON.stringify(parsedBpmn));
+
     // Calculate various metrics using BPMN analysis functions
     const elementCount = countElements(parsedBpmn);
     const cfc = calculateControllFlowComplexity(parsedBpmn);
     const ccm = await calculateCognitiveWeight(parsedBpmn, bpmnFileBuffer);
     const fifo = calculateFiFo(parsedBpmn);
     const hal = calculateHalstead(parsedBpmn);
+    const cop = await calcCountOfPaths(parsedBpmn, bpmnFileBuffer);
 
-    // Retrieve and log BPMN paths using getPaths function
-    await getPaths(bpmnFileBuffer);
-
+    const calculatedData: AnalyzedDataI = {
+      elementCount,
+      cfc,
+      ccm,
+      fifo,
+      hal,
+      cop,
+    };
+    addNewCalculatedBPMN(calculatedData, fileName);
     // Send calculated metrics as a response
-    res.send({ elementCount, cfc, ccm, fifo, hal });
+    res.send({ elementCount, cfc, ccm, fifo, hal, cop });
   } catch (error) {
     // Log and handle errors
     console.error(error); // Log the error for debugging purposes
@@ -47,4 +58,8 @@ export const analyzeBpmn = async (req: Request, res: Response) => {
 export const updateCognitivWeights = async (req: Request, res: Response) => {
   updateWeights(req.body);
   res.send();
+};
+
+export const getAllCalculatedData = async (req: Request, res: Response) => {
+  res.send({ data: getCalculatedBPMNs() });
 };

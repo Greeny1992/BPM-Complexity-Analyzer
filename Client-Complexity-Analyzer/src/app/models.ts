@@ -1,6 +1,7 @@
 export interface AnalyzedDataI {
   elementCount: number;
   cfc: number;
+  cop: number;
   ccm: number;
   fifo: number;
   hal: {
@@ -18,4 +19,10 @@ export interface WeightsDataI {
   or: number;
   subprocess: number;
   multipleInstance: number;
+}
+
+export interface EvaluationTableDataI {
+  bpmnName: string;
+  calculatedData: AnalyzedDataI;
+  cognitiveWeights: WeightsDataI;
 }

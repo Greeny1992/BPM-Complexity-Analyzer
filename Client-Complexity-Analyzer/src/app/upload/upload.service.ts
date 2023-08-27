@@ -11,6 +11,7 @@ export class UploadService {
   uploadFile(file: File): Observable<AnalyzedDataI> {
     const formData = new FormData();
     formData.append('bpmnFile', file, file.name);
+    console.log(file.name);
     return this.http.post<AnalyzedDataI>(environment.api + '/upload', formData);
   }
 }

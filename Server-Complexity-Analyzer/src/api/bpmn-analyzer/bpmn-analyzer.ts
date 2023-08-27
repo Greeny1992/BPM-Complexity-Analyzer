@@ -25,6 +25,21 @@ export interface WeightsDataI {
   multipleInstance: number;
 }
 
+export interface AnalyzedDataI {
+  elementCount: number;
+  cfc: number;
+  cop: number;
+  ccm: number;
+  fifo: number;
+  hal: HalsteadDataI;
+}
+
+export interface HalsteadDataI {
+  processLengthN: number;
+  processVolumeV: number;
+  processDifficultyD: number;
+}
+
 let cognitiveWeights: WeightsDataI = {
   sequences: 1,
   xor2: 2,
@@ -35,8 +50,29 @@ let cognitiveWeights: WeightsDataI = {
   multipleInstance: 6,
 };
 
+const calculatedBPMNs: {
+  bpmnName: string;
+  calculatedData: AnalyzedDataI;
+  cognitiveWeights: WeightsDataI;
+}[] = [];
+
+export function addNewCalculatedBPMN(
+  calculatedData: AnalyzedDataI,
+  bpmnName: string
+): void {
+  calculatedBPMNs.push({ bpmnName, calculatedData, cognitiveWeights });
+}
+
 export function updateWeights(newWeights: WeightsDataI): void {
   cognitiveWeights = newWeights;
+}
+
+export function getCalculatedBPMNs(): {
+  bpmnName: string;
+  calculatedData: AnalyzedDataI;
+  cognitiveWeights: WeightsDataI;
+}[] {
+  return calculatedBPMNs;
 }
 
 // Function to count various BPMN elements within a parsed BPMN object
@@ -225,7 +261,7 @@ export async function calculateCognitiveWeight(
 ): Promise<number> {
   // Calculate weights for different gateway types and subprocesses
   const sequencesWeight =
-    (await getPaths(xmlBpmn)) * cognitiveWeights.sequences;
+    ((await getPaths(xmlBpmn)) ?? 0) * cognitiveWeights.sequences;
   const xorWeight = calcXORWeight(
     getOpeningGatewaysOfType(parsedBpmn, "bpmn:ExclusiveGateway")
   );
@@ -343,7 +379,7 @@ export function calculateFiFo(parsedBpmn: any): number {
 }
 
 // Function to calculate Halstead metrics based on BPMN operators
-export function calculateHalstead(parsedBpmn: any): {} {
+export function calculateHalstead(parsedBpmn: any): HalsteadDataI {
   // Get all BPMN operators from the parsed BPMN
   const allOperators = getOperators(parsedBpmn);
 
@@ -401,18 +437,65 @@ export function getOperators(parsedBpmn: any): string[] {
   return elements.map((x) => x.$type);
 }
 
+export async function calcCountOfPaths(
+  parsedBpmn: any,
+  xmlBpmn: any
+): Promise<number> {
+  const paths = await getPaths(xmlBpmn);
+  if (paths) {
+    const andGateways = getOpeningGatewaysOfType(
+      parsedBpmn,
+      "bpmn:ParallelGateway"
+    );
+    const orGateways = getOpeningGatewaysOfType(
+      parsedBpmn,
+      "bpmn:InclusiveGateway"
+    );
+    const andGatewaysPathsCount = andGateways.reduce(
+      (prev, curr) => prev + curr[1],
+      0
+    );
+    const orGatewaysPathsCount = orGateways.reduce(
+      (prev, curr) => prev + curr[1],
+      0
+    );
+    console.log(
+      paths,
+      andGatewaysPathsCount,
+      orGatewaysPathsCount,
+      andGateways,
+      orGateways,
+      countParallelGateways(andGateways),
+      countOutgoingWaysOfInclusiveGateways(orGateways)
+    );
+    const CoP =
+      paths -
+      andGatewaysPathsCount -
+      orGatewaysPathsCount +
+      countParallelGateways(andGateways) +
+      countOutgoingWaysOfInclusiveGateways(orGateways);
+    console.log("Count of Paths", CoP);
+    return CoP;
+  } else {
+    return;
+  }
+}
+
 // Async function to retrieve paths using BPMN engine
 export const getPaths = async (xmlBpmn: any) => {
-  const engine = new Engine({
-    source: xmlBpmn,
-  });
+  try {
+    const engine = new Engine({
+      source: xmlBpmn,
+    });
 
-  const [definition] = await engine.getDefinitions();
-  const shakenStarts = definition.shake();
-  const sequencesKey = Object.keys(shakenStarts)[0];
-  //@ts-ignore
-  const sequences = shakenStarts[sequencesKey];
-  console.log("Sequences-length", sequences.length);
-  console.log("Sequences", JSON.stringify(sequences));
-  return sequences.length;
+    const [definition] = await engine.getDefinitions();
+    const shakenStarts = definition.shake();
+    const sequencesKey = Object.keys(shakenStarts)[0];
+    //@ts-ignore
+    const sequences = shakenStarts[sequencesKey];
+    console.log("Sequences-length", sequences.length);
+    return sequences.length;
+  } catch (error) {
+    console.warn("GetPaths Error");
+  }
 };
