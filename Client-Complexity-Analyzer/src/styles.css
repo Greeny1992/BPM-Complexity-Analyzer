@@ -541,3 +541,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .bts-icon>svg {
   height: 1em;
 }
+
+.m-2 {
+  margin: 20px;
+}

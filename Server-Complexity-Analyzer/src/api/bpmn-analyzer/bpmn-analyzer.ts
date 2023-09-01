@@ -1,4 +1,7 @@
 import { Engine } from "bpmn-engine";
+import BPMNModdle from "bpmn-moddle";
+import * as elements from "bpmn-elements";
+import Serializer, { TypeResolver } from "moddle-context-serializer";
 
 // Define the types of BPMN elements to be considered as tasks
 const taskTypes: string[] = [
@@ -15,6 +18,21 @@ const gatewayTypes: string[] = [
   "bpmn:InclusiveGateway",
   "bpmn:ExclusiveGateway",
 ];
+
+const eventTypes: string[] = ["bpmn:StartEvent", "bpmn:EndEvent"];
+
+const dataTypes: string[] = [
+  "bpmn:DataObjectReference",
+  "bpmn:DataStoreReference",
+];
+
+const operators: string[] = [
+  ...taskTypes,
+  ...gatewayTypes,
+  ...eventTypes,
+  "bpmn:SubProcess",
+];
+const operands: string[] = [...dataTypes];
 export interface WeightsDataI {
   sequences: number;
   xor2: number;
@@ -67,6 +85,10 @@ export function updateWeights(newWeights: WeightsDataI): void {
   cognitiveWeights = newWeights;
 }
 
+export function resetCalculatedBPMNS() {
+  calculatedBPMNs.length = 0;
+}
+
 export function getCalculatedBPMNs(): {
   bpmnName: string;
   calculatedData: AnalyzedDataI;
@@ -95,7 +117,10 @@ export function countElements(parsedBpmn: any): number {
       // Filter out elements that are not 'bpmn:SequenceFlow'
       const elementsWithoutFlows =
         process.flowElements?.filter((element: any) => {
-          if (element.$type !== "bpmn:SequenceFlow") {
+          if (
+            element.$type !== "bpmn:SequenceFlow" &&
+            element.$type !== "bpmn:DataObjectReference"
+          ) {
             return true;
           } else {
             if (element.conditionExpression) {
@@ -260,8 +285,10 @@ export async function calculateCognitiveWeight(
   xmlBpmn: any
 ): Promise<number> {
   // Calculate weights for different gateway types and subprocesses
-  const sequencesWeight =
-    ((await getPaths(xmlBpmn)) ?? 0) * cognitiveWeights.sequences;
+  const paths = (await getPaths(xmlBpmn)) ?? [];
+  const sequences = getSequences(paths).length;
+
+  const sequencesWeight = sequences * cognitiveWeights.sequences;
   const xorWeight = calcXORWeight(
     getOpeningGatewaysOfType(parsedBpmn, "bpmn:ExclusiveGateway")
   );
@@ -271,10 +298,69 @@ export async function calculateCognitiveWeight(
   const orWeight = calcInclusiveWeight(
     getOpeningGatewaysOfType(parsedBpmn, "bpmn:InclusiveGateway")
   );
+
   const subprocessWeight = calcSubprocessWeight(countSubprocesses(parsedBpmn));
 
+  const multipleInstanceActivityWeight =
+    countMultipleInstanceActivities(parsedBpmn) *
+    cognitiveWeights.multipleInstance;
+
   // Calculate and return the total Kognitive weight
-  return xorWeight + andWeight + orWeight + subprocessWeight + sequencesWeight;
+  return (
+    xorWeight +
+    andWeight +
+    orWeight +
+    subprocessWeight +
+    sequencesWeight +
+    multipleInstanceActivityWeight
+  );
+}
+
+function getSequences(paths: any[]): any {
+  const result: any[] = [];
+  for (let i = 0; i < paths.length; i++) {
+    const pattern: any[] = [];
+    const sequence = paths[i].sequence;
+    for (let j = 0; j < sequence.length; j++) {
+      if (
+        sequence[j].type === "bpmn:Task" &&
+        (pattern.length === 0 ||
+          pattern[pattern.length - 1].type === "bpmn:SequenceFlow")
+      ) {
+        pattern.push(sequence[j]);
+      } else if (
+        sequence[j].type === "bpmn:SequenceFlow" &&
+        pattern.length !== 0 &&
+        pattern[pattern.length - 1].type === "bpmn:Task"
+      ) {
+        pattern.push(sequence[j]);
+      } else {
+        if (pattern.length > 2) {
+          result.push([...pattern]);
+        }
+        pattern.length = 0;
+      }
+    }
+  }
+  const mappedToID = result.map((x) => x.map((y: any) => y.id));
+  const unique = filterDuplicatePatterns(mappedToID);
+  console.log("Unique Sequences Count: ", unique.length);
+  return unique;
+}
+
+function filterDuplicatePatterns(patterns: any[]) {
+  const uniquePatterns: any[] = [];
+  const seenPatterns: any = {};
+
+  patterns.forEach((pattern) => {
+    const patternStr = JSON.stringify(pattern);
+    if (!seenPatterns[patternStr]) {
+      seenPatterns[patternStr] = true;
+      uniquePatterns.push(pattern);
+    }
+  });
+
+  return uniquePatterns;
 }
 
 // Function to calculate the weight of XOR gateways based on outgoing paths
@@ -372,27 +458,79 @@ export function calcSubprocessWeight(subprocessCount: number): number {
   return subprocessWeight;
 }
 
+export function countMultipleInstanceActivities(parsedBpmn: any): number {
+  // Initialize the subprocess count
+  let subprocessCount = 0;
+  const rootElement = parsedBpmn.rootElement;
+
+  // Check if the root element is of type 'bpmn:Definitions'
+  if (rootElement.$type === "bpmn:Definitions") {
+    // Retrieve the processes from the root elements
+    const processes = rootElement.rootElements.filter(
+      (element: any) => element.$type === "bpmn:Process"
+    );
+
+    // Iterate through each process to count subprocesses
+    for (const process of processes) {
+      // Filter subprocesses from flow elements based on their type
+      const subprocesses =
+        process.flowElements?.filter(
+          (element: any) =>
+            taskTypes.includes(element.$type) &&
+            element.loopCharacteristics?.$type ===
+              "bpmn:MultiInstanceLoopCharacteristics"
+        ) ?? [];
+      // Increment the subprocess count with the number of subprocesses
+      subprocessCount += subprocesses.length;
+    }
+  }
+  // If the root element is of type 'bpmn:Process'
+  else if (rootElement.$type === "bpmn:Process") {
+    // Filter subprocesses from flow elements based on their type
+    const subprocesses =
+      rootElement.flowElements?.filter(
+        (element: any) =>
+          taskTypes.includes(element.$type) &&
+          element.loopCharacteristics?.$type ===
+            "bpmn:MultiInstanceLoopCharacteristics"
+      ) ?? [];
+    // Increment the subprocess count with the number of subprocesses
+    subprocessCount += subprocesses.length;
+  }
+
+  // Log the total subprocess count and return it
+  console.log("MultiInstanceActivity Count:", subprocessCount);
+  return subprocessCount;
+}
+
 // Function to calculate the FiFo complexity based on subprocess count
 export function calculateFiFo(parsedBpmn: any): number {
   // Calculate FiFo complexity using the formula 2^n
-  return Math.pow(2, countSubprocesses(parsedBpmn));
+  const fifoValue = 1 + countSubprocesses(parsedBpmn);
+  return Math.pow(fifoValue, 2);
 }
 
 // Function to calculate Halstead metrics based on BPMN operators
 export function calculateHalstead(parsedBpmn: any): HalsteadDataI {
   // Get all BPMN operators from the parsed BPMN
   const allOperators = getOperators(parsedBpmn);
+  const allOperands = getOperands(parsedBpmn);
 
   // Calculate N1 (total operator count) and n1 (unique operator count)
   const N1 = allOperators.length;
   const n1 = new Set(allOperators).size;
 
+  const N2 = allOperands.length;
+  const n2 = new Set(allOperands).size;
+
   // Log and return Halstead metrics
-  console.log("Unique operator count: ", n1);
-  console.log("All operator count: ", N1);
-  const processLengthN = n1 * Math.log2(n1);
-  const processVolumeV = N1 * Math.log2(n1);
-  const processDifficultyD = n1 / 2;
+  console.log("Unique operator/operand count: ", n1, n2);
+  console.log("All operator/operand count: ", N1, N2);
+  console.log(allOperands);
+  const processLengthN = n1 * Math.log2(n1) + n2 * Math.log2(n2);
+  const processVolumeV = (N1 + N2) * Math.log2(n1 + n2);
+
+  const processDifficultyD = (n1 / 2) * (N2 / n2);
   return { processLengthN, processVolumeV, processDifficultyD };
 }
 
@@ -412,12 +550,9 @@ export function getOperators(parsedBpmn: any): string[] {
     for (const process of processes) {
       // Filter BPMN operators from flow elements based on types
       const el =
-        process.flowElements?.filter((element: any) => {
-          return (
-            taskTypes.includes(element.$type) ||
-            gatewayTypes.includes(element.$type)
-          );
-        }) ?? [];
+        process.flowElements?.filter((element: any) =>
+          operators.includes(element.$type)
+        ) ?? [];
       // Append the filtered elements to the array
       elements.push(...el);
     }
@@ -427,7 +562,7 @@ export function getOperators(parsedBpmn: any): string[] {
     // Filter BPMN operators from flow elements based on types
     const el =
       rootElement.flowElements?.filter((element: any) =>
-        taskTypes.includes(element.$type)
+        operators.includes(element.$type)
       ) ?? [];
     // Append the filtered elements to the array
     elements.push(...el);
@@ -437,65 +572,69 @@ export function getOperators(parsedBpmn: any): string[] {
   return elements.map((x) => x.$type);
 }
 
-export async function calcCountOfPaths(
-  parsedBpmn: any,
-  xmlBpmn: any
-): Promise<number> {
-  const paths = await getPaths(xmlBpmn);
-  if (paths) {
-    const andGateways = getOpeningGatewaysOfType(
-      parsedBpmn,
-      "bpmn:ParallelGateway"
+export function getOperands(parsedBpmn: any): string[] {
+  const elements = [];
+  const rootElement = parsedBpmn.rootElement;
+
+  // Check if the root element is of type 'bpmn:Definitions'
+  if (rootElement.$type === "bpmn:Definitions") {
+    // Retrieve the processes from the root elements
+    const processes = rootElement.rootElements.filter(
+      (element: any) => element.$type === "bpmn:Process"
     );
-    const orGateways = getOpeningGatewaysOfType(
-      parsedBpmn,
-      "bpmn:InclusiveGateway"
-    );
-    const andGatewaysPathsCount = andGateways.reduce(
-      (prev, curr) => prev + curr[1],
-      0
-    );
-    const orGatewaysPathsCount = orGateways.reduce(
-      (prev, curr) => prev + curr[1],
-      0
-    );
-    console.log(
-      paths,
-      andGatewaysPathsCount,
-      orGatewaysPathsCount,
-      andGateways,
-      orGateways,
-      countParallelGateways(andGateways),
-      countOutgoingWaysOfInclusiveGateways(orGateways)
-    );
-    const CoP =
-      paths -
-      andGatewaysPathsCount -
-      orGatewaysPathsCount +
-      countParallelGateways(andGateways) +
-      countOutgoingWaysOfInclusiveGateways(orGateways);
-    console.log("Count of Paths", CoP);
-    return CoP;
-  } else {
-    return;
+
+    // Iterate through each process to get BPMN operators
+    for (const process of processes) {
+      // Filter BPMN operators from flow elements based on types
+      const el =
+        process.flowElements?.filter((element: any) =>
+          operands.includes(element.$type)
+        ) ?? [];
+      // Append the filtered elements to the array
+      elements.push(...el);
+    }
   }
+  // If the root element is of type 'bpmn:Process'
+  else if (rootElement.$type === "bpmn:Process") {
+    // Filter BPMN operators from flow elements based on types
+    const el =
+      rootElement.flowElements?.filter((element: any) =>
+        operands.includes(element.$type)
+      ) ?? [];
+    // Append the filtered elements to the array
+    elements.push(...el);
+  }
+
+  // Extract and return the BPMN types of the elements
+  return elements.map((x) => x.$type);
+}
+
+export async function calcCountOfPaths(xmlBpmn: any): Promise<number> {
+  const paths = (await getPaths(xmlBpmn)).length;
+  return paths;
 }
 
 // Async function to retrieve paths using BPMN engine
 export const getPaths = async (xmlBpmn: any) => {
   try {
-    const engine = new Engine({
-      source: xmlBpmn,
+    const moddleContext = await new BPMNModdle({
+      camunda: require("camunda-bpmn-moddle/resources/camunda.json"),
+    }).fromXML(xmlBpmn);
+    const sourceContext = Serializer(moddleContext, TypeResolver(elements));
+    const engine = Engine({
+      sourceContext,
     });
 
     const [definition] = await engine.getDefinitions();
-    const shakenStarts = definition.shake();
-    const sequencesKey = Object.keys(shakenStarts)[0];
-    //@ts-ignore
-    const sequences = shakenStarts[sequencesKey];
-    console.log("Sequences-length", sequences.length);
-    return sequences.length;
+    const shakenStarts: any = definition.shake();
+    const sequences = [];
+    for (const key in shakenStarts) {
+      sequences.push(...shakenStarts[key]);
+    }
+    return sequences;
   } catch (error) {
+    console.log(error);
     console.warn("GetPaths Error");
+    return [];
   }
 };

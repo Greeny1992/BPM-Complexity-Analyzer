@@ -6,12 +6,12 @@ import {
   calculateFiFo,
   calculateHalstead,
   countElements,
-  getPaths,
   updateWeights,
   calcCountOfPaths,
   AnalyzedDataI,
   addNewCalculatedBPMN,
   getCalculatedBPMNs,
+  resetCalculatedBPMNS,
 } from "./bpmn-analyzer";
 const bpmnModdle = require("bpmn-moddle");
 
@@ -26,14 +26,14 @@ export const analyzeBpmn = async (req: Request, res: Response) => {
   try {
     // Parse the BPMN XML using bpmn-moddle
     const parsedBpmn = await moddle.fromXML(bpmnFileBuffer);
-
+    // console.log(JSON.stringify(parsedBpmn));
     // Calculate various metrics using BPMN analysis functions
     const elementCount = countElements(parsedBpmn);
     const cfc = calculateControllFlowComplexity(parsedBpmn);
     const ccm = await calculateCognitiveWeight(parsedBpmn, bpmnFileBuffer);
     const fifo = calculateFiFo(parsedBpmn);
     const hal = calculateHalstead(parsedBpmn);
-    const cop = await calcCountOfPaths(parsedBpmn, bpmnFileBuffer);
+    const cop = await calcCountOfPaths(bpmnFileBuffer);
 
     const calculatedData: AnalyzedDataI = {
       elementCount,
@@ -62,4 +62,9 @@ export const updateCognitivWeights = async (req: Request, res: Response) => {
 
 export const getAllCalculatedData = async (req: Request, res: Response) => {
   res.send({ data: getCalculatedBPMNs() });
+};
+
+export const resetEvalutation = async (req: Request, res: Response) => {
+  resetCalculatedBPMNS();
+  res.send("");
 };

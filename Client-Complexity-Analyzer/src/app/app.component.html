@@ -3,23 +3,27 @@
 </mat-toolbar>
 <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start" dynamicHeight>
   <mat-tab label="Upload & Viewer">
-    <div class="row">
-      <app-upload
-        (fileUploaded)="onFileUploaded($event)"
-        (analyzedResult)="analyzedData = $event"
-      ></app-upload>
-      <button
-        style="margin-left: 10px"
-        mat-mini-fab
-        color="warn"
-        (click)="resetCurrentBPMN()"
-      >
-        <mat-icon>refresh</mat-icon>
-      </button>
-    </div>
-    <div style="height: 800px">
-      <app-bpmn-viewer [bpmnXml]="uploadedBpmn"></app-bpmn-viewer>
-    </div>
+    <mat-card class="m-2">
+      <div class="row m-2">
+        <app-upload
+          (fileUploaded)="onFileUploaded($event)"
+          (analyzedResult)="analyzedData = $event"
+        ></app-upload>
+        <button
+          style="margin-left: 10px"
+          mat-mini-fab
+          color="warn"
+          (click)="resetCurrentBPMN()"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </mat-card>
+    <mat-card class="m-2">
+      <div style="height: 800px">
+        <app-bpmn-viewer [bpmnXml]="uploadedBpmn"></app-bpmn-viewer>
+      </div>
+    </mat-card>
   </mat-tab>
   <mat-tab>
     <ng-template mat-tab-label>
@@ -29,18 +33,9 @@
             ? "Not Calculated yet"
             : analyzedData.elementCount)
       }}
-      <mat-icon
-        *ngIf="analyzedData.elementCount !== undefined"
-        class="example-tab-icon"
-        [color]="analyzedData.elementCount > 10 ? 'warn' : 'primary'"
-        style="margin-left: 10px"
-        >{{
-          analyzedData.elementCount > 10 ? "thumb_down" : "thumb_up"
-        }}</mat-icon
-      >
     </ng-template>
     <div class="row">
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-header>
           <mat-card-title> Count of Elements </mat-card-title>
           <mat-card-subtitle>Description</mat-card-subtitle>
@@ -133,20 +128,13 @@
             ? "Not Calculated yet"
             : analyzedData.cfc)
       }}
-      <mat-icon
-        *ngIf="analyzedData.cfc !== undefined"
-        class="example-tab-icon"
-        [color]="analyzedData.cfc > 10 ? 'warn' : 'primary'"
-        style="margin-left: 10px"
-        >{{ analyzedData.cfc > 10 ? "thumb_down" : "thumb_up" }}</mat-icon
-      >
     </ng-template>
 
     <div class="row">
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-content> </mat-card-content>
       </mat-card>
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-content> </mat-card-content>
       </mat-card></div
   ></mat-tab>
@@ -158,20 +146,13 @@
             ? "Not Calculated yet"
             : analyzedData.cop)
       }}
-      <mat-icon
-        *ngIf="analyzedData.cop !== undefined"
-        class="example-tab-icon"
-        [color]="analyzedData.cop > 10 ? 'warn' : 'primary'"
-        style="margin-left: 10px"
-        >{{ analyzedData.cop > 10 ? "thumb_down" : "thumb_up" }}</mat-icon
-      >
     </ng-template>
 
     <div class="row">
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-content> </mat-card-content>
       </mat-card>
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-content> </mat-card-content>
       </mat-card></div
   ></mat-tab>
@@ -183,16 +164,9 @@
             ? "Not Calculated yet"
             : analyzedData.ccm)
       }}
-      <mat-icon
-        *ngIf="analyzedData.ccm !== undefined"
-        class="example-tab-icon"
-        [color]="analyzedData.ccm > 10 ? 'warn' : 'primary'"
-        style="margin-left: 10px"
-        >{{ analyzedData.ccm > 10 ? "thumb_down" : "thumb_up" }}</mat-icon
-      >
     </ng-template>
     <div class="row">
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-header>
           <mat-card-title
             >Cognitiv Weights
@@ -336,7 +310,7 @@
           </form>
         </mat-card-content>
       </mat-card>
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-content> </mat-card-content>
       </mat-card></div
   ></mat-tab>
@@ -348,16 +322,9 @@
             ? "Not Calculated yet"
             : analyzedData.fifo)
       }}
-      <mat-icon
-        *ngIf="analyzedData.fifo !== undefined"
-        class="example-tab-icon"
-        [color]="analyzedData.fifo > 10 ? 'warn' : 'primary'"
-        style="margin-left: 10px"
-        >{{ analyzedData.fifo > 10 ? "thumb_down" : "thumb_up" }}</mat-icon
-      >
     </ng-template>
     <div class="row">
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-content>
           <h2>FanIn-/FanOut-Metric</h2>
           <p>
@@ -388,7 +355,7 @@
           </p>
         </mat-card-content>
       </mat-card>
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-content>
           <h2>What to do</h2>
           <p>
@@ -434,18 +401,9 @@
               " D=" +
               (analyzedData.hal.processDifficultyD | number : "1.2-2"))
       }}
-      <mat-icon
-        *ngIf="analyzedData.hal !== undefined"
-        class="example-tab-icon"
-        [color]="analyzedData.hal.processLengthN > 10 ? 'warn' : 'primary'"
-        style="margin-left: 10px"
-        >{{
-          analyzedData.hal.processLengthN > 10 ? "thumb_down" : "thumb_up"
-        }}</mat-icon
-      >
     </ng-template>
     <div class="row">
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-content>
           <h2>Halstead metric</h2>
           <p>
@@ -476,7 +434,7 @@
           </p>
         </mat-card-content>
       </mat-card>
-      <mat-card>
+      <mat-card class="m-2">
         <mat-card-content>
           <h2>What to do</h2>
           <p>

@@ -12,13 +12,17 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "bpmn-elements": "^11.1.1",
     "bpmn-engine": "^17.1.1",
     "bpmn-js": "^13.2.2",
+    "bpmn-moddle": "^8.0.1",
+    "camunda-bpmn-moddle": "^7.0.1",
     "chalk": "^4.1.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "helmet": "^6.1.5",
+    "moddle-context-serializer": "^4.1.0",
     "multer": "^1.4.5-lts.1",
     "uuid": "^9.0.0",
     "xml2js": "^0.6.2"

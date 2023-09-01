@@ -24,7 +24,9 @@
     "bpmn-js-properties-panel": "^5.0.0",
     "bpmn-js-token-simulation": "^0.31.1",
     "diagram-js": "^12.3.0",
+    "echarts": "^5.4.3",
     "ng-katex": "^2.0.3",
+    "ngx-echarts": "^15.0.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"

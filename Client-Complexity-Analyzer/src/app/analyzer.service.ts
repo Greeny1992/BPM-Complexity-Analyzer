@@ -23,4 +23,8 @@ export class AnalyzerService {
       )
       .pipe(map((value) => value.data));
   }
+
+  resetCalculatedData(): Observable<any> {
+    return this.http.delete(environment.api + '/reset');
+  }
 }
