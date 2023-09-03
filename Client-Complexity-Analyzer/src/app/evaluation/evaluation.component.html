@@ -1,7 +1,26 @@
 <mat-card class="m-2" *ngIf="data.length > 0">
-  <button class="m-2" mat-mini-fab color="warn" (click)="resetData()">
-    <mat-icon>refresh</mat-icon>
-  </button>
+  <div class="row">
+    <button
+      class="m-2"
+      mat-mini-fab
+      color="warn"
+      (click)="resetData()"
+      matTooltip="Reset all data"
+    >
+      <mat-icon>refresh</mat-icon>
+    </button>
+    <button
+      class="m-2"
+      mat-mini-fab
+      color="primary"
+      (click)="downloadCSV()"
+      matTooltip="Download data as csv"
+    >
+      <mat-icon
+        ><span class="material-symbols-outlined"> download </span></mat-icon
+      >
+    </button>
+  </div>
   <div
     #chartContainer
     echarts

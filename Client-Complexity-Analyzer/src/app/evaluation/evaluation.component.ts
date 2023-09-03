@@ -12,6 +12,7 @@ import { NGX_ECHARTS_CONFIG, NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-evaluation',
@@ -26,6 +27,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatPaginatorModule,
     MatCardModule,
     NgxEchartsModule,
+    MatTooltipModule,
     NgIf,
   ],
   templateUrl: './evaluation.component.html',
@@ -56,6 +58,9 @@ export class EvaluationComponent implements OnInit, AfterViewInit {
   constructor(private analyzerS: AnalyzerService) {}
   ngOnInit(): void {
     this.chartOptions = {
+      legend: {
+        data: ['CFC', 'CoE', 'CoP', 'CCM', 'FiFo'],
+      },
       grid: {
         top: '10%',
         left: '5%',
@@ -72,9 +77,6 @@ export class EvaluationComponent implements OnInit, AfterViewInit {
       },
       tooltip: {
         trigger: 'item',
-        textStyle: {
-          color: 'green',
-        },
       },
       series: [
         {
@@ -91,6 +93,12 @@ export class EvaluationComponent implements OnInit, AfterViewInit {
         },
         {
           name: 'CCM',
+          type: 'bar',
+          barGap: 0,
+          data: [],
+        },
+        {
+          name: 'CoP',
           type: 'bar',
           barGap: 0,
           data: [],
@@ -136,6 +144,7 @@ export class EvaluationComponent implements OnInit, AfterViewInit {
           prev: {
             CFC: number[];
             CoE: number[];
+            CoP: number[];
             CCM: number[];
             FiFo: number[];
             bpmnName: string[];
@@ -144,18 +153,20 @@ export class EvaluationComponent implements OnInit, AfterViewInit {
         ) => {
           prev.CFC.push(curr.calculatedData.cfc);
           prev.CoE.push(curr.calculatedData.elementCount);
+          prev.CoP.push(curr.calculatedData.cop);
           prev.CCM.push(curr.calculatedData.ccm);
           prev.FiFo.push(curr.calculatedData.fifo);
           prev.bpmnName.push(curr.bpmnName);
           return prev;
         },
-        { CFC: [], CoE: [], CCM: [], FiFo: [], bpmnName: [] }
+        { CFC: [], CoE: [], CCM: [], CoP: [], FiFo: [], bpmnName: [] }
       );
 
       this.chartOptions.series[0].data = chartData.CFC;
       this.chartOptions.series[1].data = chartData.CoE;
       this.chartOptions.series[2].data = chartData.CCM;
-      this.chartOptions.series[3].data = chartData.FiFo;
+      this.chartOptions.series[3].data = chartData.CoP;
+      this.chartOptions.series[4].data = chartData.FiFo;
       this.chartOptions.xAxis.data = chartData.bpmnName;
       this.chart?.setOption(this.chartOptions);
     }
@@ -171,5 +182,42 @@ export class EvaluationComponent implements OnInit, AfterViewInit {
         this.dataSource.sort = this.sort;
         this.transformData();
       });
+  }
+
+  downloadCSV() {
+    // Convert data to CSV format
+    const csvData = this.convertToCSV(
+      this.data.map((x) => ({
+        BPMNName: x.bpmnName,
+        CountOfElements: x.calculatedData.elementCount,
+        ControllFlowComplexity: x.calculatedData.cfc,
+        CountOfPaths: x.calculatedData.cop,
+        CognitiveComplexity: x.calculatedData.ccm,
+        FanInFanOut: x.calculatedData.fifo,
+      }))
+    );
+
+    // Create a Blob object
+    const blob = new Blob([csvData], { type: 'text/csv' });
+
+    // Create a URL for the Blob object
+    const url = URL.createObjectURL(blob);
+
+    // Create an anchor element to trigger the download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'data.csv';
+
+    // Trigger a click event to download the CSV file
+    a.click();
+
+    // Release the URL object
+    URL.revokeObjectURL(url);
+  }
+
+  private convertToCSV(data: any[]): string {
+    const header = Object.keys(data[0]).join(',') + '\n';
+    const rows = data.map((obj) => Object.values(obj).join(',')).join('\n');
+    return header + rows;
   }
 }

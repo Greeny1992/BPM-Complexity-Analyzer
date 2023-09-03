@@ -4,7 +4,7 @@ import { UploadService } from './upload.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AnalyzedDataI } from '../models';
 @Component({
@@ -21,16 +21,15 @@ export class UploadComponent {
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
+    const files = Array.from(input.files || []);
 
-    if (file) {
-      this.fileUploaded.emit(file);
-      this.uploadS
-        .uploadFile(file)
-        .pipe(
-          catchError((x) => {
+    if (files.length > 0) {
+      // Create an observable for each file
+      const fileObservables = files.map((file) =>
+        this.uploadS.uploadFile(file).pipe(
+          catchError((error) => {
             this._snack.open(
-              "The uploaded file couldn't be analyzed. Please try again",
+              `File '${file.name}' couldn't be analyzed. Please try again`,
               '',
               {
                 duration: 3000,
@@ -38,12 +37,24 @@ export class UploadComponent {
                 horizontalPosition: 'center',
               }
             );
-            console.log(x);
+            console.error(error);
             return of({} as AnalyzedDataI);
           })
         )
-        .subscribe((res: AnalyzedDataI) => this.analyzedResult.emit(res));
+      );
+
+      // Combine observables and subscribe to them
+      forkJoin(fileObservables).subscribe((results: AnalyzedDataI[]) => {
+        // Emit the results for each file separately
+        results.forEach((res, index) => {
+          const file = files[index];
+          this.fileUploaded.emit(file);
+          this.analyzedResult.emit(res);
+        });
+
+        // Clear the input value
+        input.value = '';
+      });
     }
-    input.value = '';
   }
 }

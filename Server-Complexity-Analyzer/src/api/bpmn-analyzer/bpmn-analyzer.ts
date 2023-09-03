@@ -526,7 +526,6 @@ export function calculateHalstead(parsedBpmn: any): HalsteadDataI {
   // Log and return Halstead metrics
   console.log("Unique operator/operand count: ", n1, n2);
   console.log("All operator/operand count: ", N1, N2);
-  console.log(allOperands);
   const processLengthN = n1 * Math.log2(n1) + n2 * Math.log2(n2);
   const processVolumeV = (N1 + N2) * Math.log2(n1 + n2);
 
