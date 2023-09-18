@@ -80,15 +80,15 @@
             The formula for the Count of Elements (CoE) metric is as follows:
           </p>
           <pre>
-        CoE(GPM) = |E_GPM|
+        CoE(BPM) = |E_BPM|
     </pre
           >
           <p>
-            Where CoE(GPM) represents the Count of Elements in a General Process
-            Model (GPM), and E is the set of all elements within the model. This
-            extended metric provides a more comprehensive measure of complexity
-            by considering the various elements that contribute to the overall
-            complexity of a BPMN model.
+            Where CoE(BPM) represents the Count of Elements in a Business
+            Process Model (BPM), and E is the set of all elements within the
+            model. This extended metric provides a more comprehensive measure of
+            complexity by considering the various elements that contribute to
+            the overall complexity of a BPMN model.
           </p>
 
           <p>
@@ -132,12 +132,109 @@
 
     <div class="row">
       <mat-card class="m-2">
-        <mat-card-content> </mat-card-content>
+        <mat-card-header>
+          <mat-card-title> Control Flow Complexity</mat-card-title>
+          <mat-card-subtitle>Description</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            The McCabe cyclomatic complexity metric is a key measure in software
+            development, introduced by McCabe to assess the understandability of
+            software programs based on their control flow structures. It
+            quantifies the number of possible paths that can be traversed in a
+            control flow graph, with each binary decision (if-statement) adding
+            one to the complexity count.
+          </p>
+
+          <p>
+            In the context of business models and process modeling, Cardoso
+            adapted the McCabe metric, focusing on paths originating from
+            gateways. However, this adaptation considers only the splits
+            mentioned in the relevant chapter, disregarding joins. The
+            complexity of a process increases differently with each split in a
+            graphical process model (BPM), leading to a Control Flow Complexity
+            (CFC) score.
+          </p>
+
+          <p>The CFC score is calculated based on different types of splits:</p>
+          <ul>
+            <li>
+              <strong>AND Splits:</strong> These splits result in one state
+              after convergence, as only one outgoing path is executed when all
+              necessary input paths are reached.
+            </li>
+            <li>
+              <strong>XOR Splits:</strong> Similar to AND splits, XOR splits
+              allow only one outgoing path to be executed, but each specified
+              state can be chosen, resulting in a CFC score equal to the number
+              of possibilities.
+            </li>
+            <li>
+              <strong>OR Splits:</strong> OR splits have at least one and at
+              most n possibilities for execution, increasing the CFC score by
+              <em>(2^n) - 1</em>. However, the calculation must ensure that none
+              of the outgoing paths is a default path, i.e., a path taken only
+              if no other decision is made. A recommended calculation method is
+              provided.
+            </li>
+          </ul>
+
+          <p>
+            The adapted CFC score accounts for conditional paths, where
+            activities with conditions on their outgoing paths are involved.
+            Complex nested splits are not considered in this context but should
+            be investigated in future research.
+          </p>
+
+          <p>
+            The CFC scores for AND, XOR, and OR splits are summed up to
+            calculate the overall control flow complexity for a BPM. It's
+            important to note that this metric evaluates the mental load imposed
+            on a modeler by examining the individual elements' states, rather
+            than counting all possible paths in the process.
+          </p>
+
+          <p>
+            A limitation of this metric is that it does not account for possible
+            nesting, where nested constructs may increase complexity. However,
+            this is not addressed in this work, as it assumes that models being
+            analyzed are "well-structured," meaning that branches occur in pairs
+            with correct nesting.
+          </p>
+
+          <h2>References</h2>
+          <ul>
+            <li>
+              Reference 1 - T.J. McCabe. A complexity measure. IEEE Transactions
+              on Software Engineering, SE- 2(4):308–320, 1976.
+            </li>
+            <li>
+              Reference 2 - Jorge Cardoso. How to Measure the Control-flow
+              Complexity of Web processes and Workflows, pages 199–212. Future
+              Strategies Inc., 01 2005.
+            </li>
+            <li>
+              Reference 3 - A. Demin. Estimation of program’s quality on the
+              base their structural-graphic repre- sentation. In 5th
+              Korea-Russia International Symposium on Science and Technology.
+              Proceedings. KORUS 2001 (Cat. No.01EX478), volume 1, pages 95–98
+              vol.1, 2001.
+            </li>
+            <li>
+              Reference 4 - Wil Aalst. The application of petri nets to workflow
+              management. Journal of Circuits, Systems, and Computers, 8:21–66,
+              02 1998.
+            </li>
+            <li>
+              Reference 5 - Bartosz Kiepuszewski, Arthur Ter, and Christoph
+              Bussler. On structured workflow mo- delling. volume 1789, pages
+              431–445, 06 2000.
+            </li>
+          </ul>
+        </mat-card-content>
       </mat-card>
-      <mat-card class="m-2">
-        <mat-card-content> </mat-card-content>
-      </mat-card></div
-  ></mat-tab>
+    </div></mat-tab
+  >
   <mat-tab>
     <ng-template mat-tab-label>
       {{
@@ -150,12 +247,68 @@
 
     <div class="row">
       <mat-card class="m-2">
-        <mat-card-content> </mat-card-content>
+        <mat-card-header>
+          <mat-card-title> Count of Paths </mat-card-title>
+          <mat-card-subtitle>Description</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            The original goal of the McCabe Metric is to represent the required
+            test coverage in a program by capturing all possible paths in a
+            program. This concept could also be of interest for Business Process
+            Models (BPM). It allows the analysis of how many executable paths
+            exist in a business process model. It is argued that the number of
+            possible paths is related to the number of branches. As mentioned
+            earlier, a high number of splits in a model indicates high
+            complexity.
+          </p>
+
+          <p>
+            When considering all possible paths in a model, meaning every path
+            that can be followed from start to end event. In this case, the
+            paths of the parallel branch can be considered as one path, as there
+            is no nesting of further paths.
+          </p>
+
+          <p>
+            This raises the question of whether it would be more meaningful to
+            display the number of possible paths through a system for the
+            complexity of the control flow. The previously presented number
+            describes control flow complexity as the number of paths originating
+            from splits, rather than the total number of possible paths in a
+            system. As previously described, complexity increases with the
+            number of elements, so it is reasonable to assume that the number of
+            possible paths in a business process model is also a good indicator
+            of complexity.
+          </p>
+
+          <p>
+            Therefore, in addition to control flow complexity, a new metric is
+            introduced. This metric represents all executable paths in a BPM.
+            The metric is as follows:
+          </p>
+
+          <blockquote>
+            <p>CoP(BPM) = Number of executable paths</p>
+          </blockquote>
+
+          <p>
+            The above metric represents the count of paths that can be executed
+            in a BPM. It should be noted that parallel paths that do not contain
+            further splits are considered as a single path.
+          </p>
+
+          <h2>References</h2>
+          <ul>
+            <li>
+              Reference 1 - T.J. McCabe. A complexity measure. IEEE Transactions
+              on Software Engineering, SE- 2(4):308–320, 1976.
+            </li>
+          </ul>
+        </mat-card-content>
       </mat-card>
-      <mat-card class="m-2">
-        <mat-card-content> </mat-card-content>
-      </mat-card></div
-  ></mat-tab>
+    </div></mat-tab
+  >
   <mat-tab>
     <ng-template mat-tab-label>
       {{
@@ -311,9 +464,137 @@
         </mat-card-content>
       </mat-card>
       <mat-card class="m-2">
-        <mat-card-content> </mat-card-content>
-      </mat-card></div
-  ></mat-tab>
+        <mat-card-header>
+          <mat-card-title> Cognitive Complexity Metric </mat-card-title>
+          <mat-card-subtitle>Description</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            The cognitive complexity metric, or CCM, represents another
+            significant approach to assessing complexity. Since complexity is
+            influenced by a large part of subjective perception, Shao and Wang
+            define weights for elements of software to quantify the cognitive
+            weight of a model . This is intended to allow the quantification of
+            the cognitive weight of a model, with the individual weights of the
+            components being summed up.
+          </p>
+
+          <p>
+            Gruhn adapts the weights developed by Shao for software complexity
+            to business process models, providing a way to apply this concept to
+            business processes. The weightings are as shown in Table 1.
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Control Structure (BPMN)</th>
+                <th>Control Structure (Software)</th>
+                <th>Weight (BPMN)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Sequential sequence of activities</td>
+                <td>Sequences</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td>XOR-Split with exactly two outputs</td>
+                <td>if/then branching</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>XOR-Split with more than 2 outputs</td>
+                <td>switch/case branching</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <td>AND-Split</td>
+                <td>Parallel execution of control flows</td>
+                <td>4</td>
+              </tr>
+              <tr>
+                <td>OR-Split</td>
+                <td>switch/case branching followed by parallel execution</td>
+                <td>7</td>
+              </tr>
+              <tr>
+                <td>Subprocess</td>
+                <td>Function call</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td>Multiple instances of activities</td>
+                <td>Branching followed by parallel execution</td>
+                <td>6</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p>
+            Table 1 provides a representation of cognitive weights for various
+            control structures as defined by Gruhn. Additionally, the equivalent
+            control structure in software development is presented.
+          </p>
+
+          <p>
+            While Gruhn explains the detailed approach for deriving these
+            weights, he also notes that these weightings have not been
+            empirically tested. In contrast, Shao and Wang refer to verified
+            values .
+          </p>
+
+          <p>
+            It can be said that the cognitive complexity metric by Shao and Wang
+            provides a good foundation, but the adaptation to business process
+            models is not a trivial process. For this work, Gruhn's weightings
+            for the prototype development are nevertheless used.
+          </p>
+
+          <p>
+            To mitigate the weaknesses of these values, users should be able to
+            change the values in the future. This should be done because
+            different users would weight the individual control structures
+            differently. Since the scope of an empirical testing of weightings
+            in this work is not sufficient, this provides an opportunity to
+            change the values and identify potential correlations with other
+            metrics.
+          </p>
+
+          <p>
+            Another point to note concerns the sequences defined by Gruhn for
+            business models. It is not described when a sequence is defined as a
+            sequence. It could be assumed that every path in a model can be
+            described as a sequence. However, this would not align with the
+            defined weight. With a weight of one, it suggests that a sequence is
+            very easy to understand. Therefore, a better interpretation would be
+            that a sequence is considered as a series of activities without
+            interruption. This interpretation would also better align with
+            Gruhn's defined weight, as a series of activities without branching
+            is the easiest-to-understand structure.
+          </p>
+
+          <h2>References</h2>
+          <ul>
+            <li>
+              Reference 1 - Jingqiu Shao and Yingxu Wang. A new measure of
+              software complexity based on cognitive weights. In CCECE 2003 -
+              Canadian Conference on Electrical and Computer Engineering. Toward
+              a Caring and Humane Technology (Cat. No.03CH37436), volume 2,
+              pages 1333–1338 vol.2, 2003. 101
+            </li>
+            <li>
+              Reference 2 - Volker Gruhn and Ralf Laue. Adopting the cognitive
+              complexity measure for business process models. In 2006 5th IEEE
+              International Conference on Cognitive Informatics, volume 1, pages
+              236–241, 2006.
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </div></mat-tab
+  >
   <mat-tab>
     <ng-template mat-tab-label>
       {{
@@ -325,65 +606,103 @@
     </ng-template>
     <div class="row">
       <mat-card class="m-2">
+        <mat-card-header>
+          <mat-card-title> Fan-In-/Fan-Out </mat-card-title>
+          <mat-card-subtitle>Description</mat-card-subtitle>
+        </mat-card-header>
         <mat-card-content>
-          <h2>FanIn-/FanOut-Metric</h2>
           <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
+            The Fan-In/Fan-Out metric is also a metric from software development
+            developed by Sallie. It is used to assess the dependencies and
+            complexity of modules or functions within a program.
           </p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card class="m-2">
-        <mat-card-content>
-          <h2>What to do</h2>
+
           <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
+            Fan-In refers to the number of functions that access a specific
+            unit. In the context of a program, these units can be methods or
+            classes . This measures how many other parts of the program depend
+            on one unit. High Fan-In values indicate that the unit is reusable
+            and well integrated into the rest of the program. Applied to
+            business process models, a high Fan-In value means that many other
+            processes or activities refer to this one process, indicating its
+            significant or central role in the overall flow .
           </p>
+
+          <p>
+            Fan-Out describes the opposite, which is the number of different
+            elements called by a specific unit. A high Fan-Out can be an
+            indication that a program has high complexity due to numerous
+            dependencies or performing many different tasks . Processes with a
+            high Fan-Out value suggest a complex process structure where many
+            different activities or subprocesses are required to achieve the
+            desired outcome.
+          </p>
+
+          <p>
+            Another aspect that can be considered in this metric is a study from
+            psychology. It is noted that human cognitive capacity for processing
+            information is limited, and on average, people can retain about
+            seven (plus or minus two) units of information in working memory.
+            This means that we typically can remember about five to nine units
+            of information before our ability to process and remember accurately
+            diminishes .
+          </p>
+
+          <p>
+            Under this consideration, one could argue that a Fan-Out number
+            greater than seven (plus or minus two) is a poor value for cognitive
+            complexity because the modeling person must also remember these
+            subprocesses in their memory.
+          </p>
+
+          <p>Henry describes the calculation of the metric as follows :</p>
+
+          <p>fifo(BPM)=(FanIn*FanOut)^2</p>
+
+          <p>
+            The formula shows that the FIFO value of a BPM is the square of the
+            product of Fan-In (process calls) and Fan-Out (subprocess calls).
+          </p>
+
+          <p>
+            The application to BPMN models is generally possible, but the
+            question arises as to what should be measured as Fan-In (process
+            call). When applying this metric to a single process, process calls
+            are not directly known. In a model, a process call would be an
+            incoming message if the start event is a message start event.
+          </p>
+
+          <p>
+            Therefore, an alternative approach would be to use start events for
+            this calculation. Each start event is an opportunity to call a
+            process. Based on this consideration, a process with a single start
+            event has a Fan-In value of one, a process with two start events has
+            a Fan-In value of two, and so on. This approach is used in this work
+            but also focuses more on the Fan-Out values since the Fan-Out value
+            provides a more significant value for perceived process complexity
+            than the Fan-In value (in relation to the previously mentioned
+            "seven (plus/minus two)" rule).
+          </p>
+
+          <p>
+            This calculation can be directly applied to BPMN and, thus, can help
+            identify defects in modularization. This can assist in designing
+            leaner and more maintainable processes.
+          </p>
+
+          <h2>References</h2>
+          <ul>
+            <li>
+              Reference 1 - S. Henry and D. Kafura. Software Structure Metrics
+              Based on Information Flow. IEEE Transactions on Software
+              Engineering, SE-7(5):510, 1981
+            </li>
+            <li>
+              Reference 2 - George A. Miller. The magical number seven plus or
+              minus two: some limits on our capacity for processing information.
+              Psychological review, 63 2:81–97, 1956
+            </li>
+          </ul>
         </mat-card-content>
       </mat-card>
     </div></mat-tab
@@ -404,65 +723,131 @@
     </ng-template>
     <div class="row">
       <mat-card class="m-2">
+        <mat-card-header>
+          <mat-card-title> Halstead metric </mat-card-title>
+          <mat-card-subtitle>Description</mat-card-subtitle>
+        </mat-card-header>
         <mat-card-content>
-          <h2>Halstead metric</h2>
           <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
+            The Halstead metrics are one of the most well-known and oldest
+            complexity metrics in software development. They involve an analysis
+            of the source code, evaluating the number of operators and operands.
+            Three metrics are calculated: program length, program volume, and
+            program difficulty. The use of these metrics has the advantage that
+            no detailed analysis of program structures is required .
           </p>
-        </mat-card-content>
-      </mat-card>
-      <mat-card class="m-2">
-        <mat-card-content>
-          <h2>What to do</h2>
+
+          <p>The following elements are used in the calculation:</p>
+
+          <ul>
+            <li><code>n1</code>: Number of distinct operators</li>
+            <li><code>n2</code>: Number of distinct operands</li>
+            <li><code>N1</code>: Total number of operators</li>
+            <li><code>N2</code>: Total number of operands</li>
+          </ul>
+
           <p>
-            The metric "Lines of Code" is an important complexity metric in
-            software development. It enables the evaluation of the complexity of
-            computer programs. Software development is the process of creating,
-            implementing, maintaining, and improving a computer program. As the
-            name suggests, the lines of the program are counted to assess the
-            problem complexity in terms of time and effort required to develop
-            and maintain a product . It is justified by the fact that as the
-            size and scope of a project increase, complexity also grows. When
-            comparing a simple program with a single "Hello World" output to
-            operating systems (which are essentially programs as well), the
-            level of complexity in operating systems is undeniable.
-            Additionally, larger and more complex applications tend to generate
-            a higher error rate during development . Gruhn and Laue suggest that
-            this metric can be adapted for BPMN as follows. Instead of counting
-            lines of code, the number of activities within a BPMN model is
-            counted, providing a measurable value for comparison. They justify
-            this approach by stating that a process with only two activities is
-            easier to understand than a process with fifty activities . However,
-            it is noted that the number of activities does not yet indicate
-            anything about the control flow . For instance, a process with fifty
-            activities but no branches (gateways), i.e., a continuous flow, is
-            not necessarily easier to understand than a process with two
-            activities. Therefore, the next subsection examines the complexity
-            of the control flow structure.
+            With these elements, the Halstead metrics can be calculated as
+            follows :
           </p>
+
+          <ul>
+            <li>
+              Program Length:
+              <p>N(BPM)= n1*log_2(n1) + n2*log_2(n2)</p>
+            </li>
+            <li>
+              Program Volume:
+              <p>V(BPM)= (N1+N2)*log_2(n1+n2)</p>
+            </li>
+            <li>
+              Program Difficulty:
+              <p>D(BPM) = (n1/2)*(N2/n2)</p>
+            </li>
+          </ul>
+
+          <p>
+            Before these metrics can be applied, it must be defined what
+            constitutes an operator and an operand. In software development,
+            this can vary depending on the programming language used. Therefore,
+            this metric is widely applicable since it can be applied to all
+            languages. In software development, examples of operators include
+            'if,' 'else,' 'for,' and 'return,' while variables are considered
+            operands .
+          </p>
+
+          <p>
+            However, after considering these metrics, the question arises as to
+            how they should be applied to BPMN models. Operators do not present
+            a difficulty in this context. For instance, activities and splits
+            can be considered operators as they closely resemble constructs from
+            software development. On the other hand, it is not straightforward
+            to determine what constitutes various operands.
+          </p>
+
+          <p>
+            Since BPMN 2.0, elements like Data Objects, Data Inputs, Data
+            Outputs, and Data Stores have been introduced, allowing the modeling
+            of data and data flows <cite>[Silver_2011]</cite>. Consequently,
+            these elements can represent operands and complete the Halstead
+            metrics. In Table <a href="#tab:halstead">1</a>, the respective
+            operators and operands for this work are defined.
+          </p>
+
+          <table>
+            <tr>
+              <th>Operators</th>
+              <th>Operands</th>
+            </tr>
+            <tr>
+              <td>Activities</td>
+              <td>Data Objects</td>
+            </tr>
+            <tr>
+              <td>Splits</td>
+              <td>Databases</td>
+            </tr>
+            <tr>
+              <td>Events</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>Subprocesses</td>
+              <td>-</td>
+            </tr>
+          </table>
+
+          <p>
+            The Halstead software metrics have both advantages and
+            disadvantages. Positively, they effectively capture the frequency of
+            programming errors and strongly correlate with them. They are also
+            usable across different programming languages and can be applied to
+            BPMN models.
+          </p>
+
+          <p>
+            However, they have the disadvantage of only considering a part of
+            the development process, namely the translation of design into
+            source code, while ignoring other significant factors like nesting
+            depth or name scope. Additionally, there are ambiguities in their
+            approach, particularly in the not clearly defined classification of
+            operands and operators, which can strongly influence the results.
+          </p>
+
+          <h2>References</h2>
+          <ul>
+            <li>
+              Reference 1 - M.H. Halstead. Elements of Software Science.
+              Computer science library. Elsevier, 1977
+            </li>
+            <li>
+              Reference 2 - J. Cardoso, J. Mendling, G. Neumann, and H. A.
+              Reijers. A discourse on complexity of process models. In Johann
+              Eder and Schahram Dustdar, editors, Business Process Management
+              Workshops, pages 117–128, Berlin, Heidelberg, 2006. Springer
+              Berlin Heidelberg
+            </li>
+          </ul>
         </mat-card-content>
       </mat-card>
     </div>
